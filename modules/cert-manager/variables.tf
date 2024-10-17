@@ -1,0 +1,33 @@
+variable "ovh_application_key" {
+  description = "OVH Application Key"
+  sensitive   = true
+}
+
+variable "ovh_application_secret" {
+  description = "OVH Application Secret"
+  sensitive   = true
+}
+
+variable "ovh_consumer_key" {
+  description = "OVH Consumer Key"
+  sensitive   = true
+}
+
+variable "namespace" {
+  description = "Namespace for the resources"
+  default     = "cert-manager"
+  type = string
+}
+
+variable "issuer_name" {
+  description = "Name of the issuer"
+  default     = "letsencrypt-prod"
+  type        = string
+}
+
+variable "email" {
+  description = "Email for the Let's Encrypt account"
+  default     = "apoo.louis.8@gmail.com"
+  type        = string
+}
+
