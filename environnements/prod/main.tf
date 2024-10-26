@@ -1,4 +1,3 @@
-
 ###### ----- VPC ----- ######
 
 resource "aws_eip" "nat" {
@@ -12,7 +11,7 @@ module "vpc" {
     cidr = var.vpc_cidr
 
     azs             = var.availability_zones
-    
+
     private_subnets = var.private_subnets
     public_subnets  = var.public_subnets
     database_subnets = var.database_subnets
@@ -29,6 +28,7 @@ module "vpc" {
         Environment = "dev"
   }
 }
+
 ###### -------------------------------------------------------------------- ######
 
 ###### ----- EKS ----- ######
@@ -51,7 +51,7 @@ module "eks" {
         eks-pod-identity-agent = {}
         kube-proxy             = {}
         vpc-cni                = {}
-    
+        aws-ebs-csi-driver     = {}
     }
 
     vpc_id                   = module.vpc.vpc_id

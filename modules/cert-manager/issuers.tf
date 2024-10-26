@@ -15,18 +15,18 @@ resource "kubernetes_manifest" "letsencrypt_prod" {
         solvers = [
           {
             dns01 = {
-                webhook = {
-                    groupName = "ovh_dns"
-                    solverName = "ovh"
-                    config = {
-                        endpoint = "ovh-eu"
-                        applicationKey = var.ovh_application_key
-                        applicationSecretRef = {
-                            name = kubernetes_secret.ovh_credentials.metadata[0].name
-                            key  = "applicationSecret"
-                        }
-                    }
+              webhook = {
+                  groupName = "ovh_dns"
+                  solverName = "ovh"
+                  config = {
+                      endpoint = "ovh-eu"
+                      applicationKey = var.ovh_application_key
+                      applicationSecretRef = {
+                          name = kubernetes_secret.ovh_credentials.metadata[0].name
+                          key  = "applicationSecret"
+                  }
                 }
+              }
             }
           }
         ]

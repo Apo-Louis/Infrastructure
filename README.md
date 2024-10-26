@@ -125,3 +125,43 @@ https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/
 ArgoCD :
 https://artifacthub.io/packages/helm/argo/argo-cd
 
+## Retour Lewis
+
+- Faire comme si on déployé pour une entreprise.(dev, prod, staging sur le cloud provider directement)
+
+- Simplifier le code et éviter les dossiers d'environnement mais plutôt utilisé du conditionnel (if, else) pour determiné les ressources à déployer en fonc de l'environnement choisis.
+https://aws.amazon.com/fr/blogs/containers/migrating-amazon-eks-clusters-from-gp2-to-gp3-ebs-volumes/
+
+- OVH : on peut utilisé ovh pour la partie DNS et certificat SSL (  )
+  - Delegation ou Route 53 
+  - Ou autonomie via le provider OVH
+
+- Utilisé Nginx Ingress Controller
+
+- Pour ArgoCD : Deployer les applications WP et DB (les config du wokflow)
+
+- Jenkins / Harbor : A la mano, sur un k3s
+  - 
+
+- Addons : EBS GP3 pour stockage persistant faire des outputs de l'arn ou backup vilero.https://aws.amazon.com/fr/blogs/containers/migrating-amazon-eks-clusters-from-gp2-to-gp3-ebs-volumes/
+
+- Gestions des secrets ?
+  - sealed-secrets
+
+
+### 20h30 : Debrief with Lewis
+
+- Le code Terraform sera que pour la prod mais devra construire.
+
+- Construire la persistence de données via le serveur aws Grafana / Prometheus
+
+
+
+- A faire : 
+
+- [ ] Revoir la constructiuon du code avec du conditionnel
+- [ ] Utiliser nginx ingress
+- [ ] Construire via terraform wordpress & db (avec argocd)
+- [ ] Ajouter l'addon gp3
+- [ ] Ajouter KubeArmor via helm chart
+- [ ] Utiliser sealed-secrets pour les secrets
