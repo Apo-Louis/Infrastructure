@@ -1,13 +1,13 @@
 # configuration de terraform
 terraform {
-  backend "s3" {
-    bucket = "ff14-raidplanner-terraform-state"
-    key    = "global/terraform-state/cluster/terraform.tfstate"
-    region = "eu-west-3"
+  # backend "s3" {
+  #   bucket = "ff14-raidplanner-terraform-state"
+  #   key    = "global/terraform-state/cluster/terraform.tfstate"
+  #   region = "eu-west-3"
 
-    dynamodb_table = "ff14-raidplanner-terraform-locks"
-    encrypt        = true
-  }
+  #   dynamodb_table = "ff14-raidplanner-terraform-locks"
+  #   encrypt        = true
+  # }
 
   required_version = ">=1.7"
 

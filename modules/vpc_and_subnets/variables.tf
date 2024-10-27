@@ -3,6 +3,11 @@ variable "azs" {
   type        = list(string)
 }
 
+variable "environment" {
+  description = "environment"
+  type        = string
+}
+
 variable "vpc_name" {
   description = "Nom du VPC"
   type        = string

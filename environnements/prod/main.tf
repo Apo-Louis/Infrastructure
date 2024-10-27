@@ -64,22 +64,31 @@ module "eks" {
     }
 
     eks_managed_node_groups = {
-        example = {
-        instance_types = ["t3.medium"] # <-- J'ai dù baisser en gamme car je pense que sur le compte de service on à des limitations.
-        
-        min_size     = 2
-        max_size     = 5
-        desired_size = 2
+        for group_name, config in var.node_groups[var.environment] : group_name => {
+            instance_types = [config.instance_type]
+            min_size       = config.min_size
+            max_size       = config.max_size
+            desired_size   = config.desired_size
+            
+            # Configuration du disque
+            volume_size    = config.disk_size
+            capacity_type  = config.capacity_type # Type de capacité
+
+            tags = {
+                "kubernetes.io/cluster/${var.eks_cluster_name}" = "owned"
+                "k8s.io/cluster-autoscaler/enabled"             = "true"
+                "k8s.io/cluster-autoscaler/${var.eks_cluster_name}" = "true"
+            }
         }
     }
 
     enable_cluster_creator_admin_permissions = true
 
     tags = {
-        Environment = "prod"
+        Environment = var.environment
         Terraform   = "true"
     }
-    }
+}
 ###### -------------------------------------------------------------------- ######
 
 

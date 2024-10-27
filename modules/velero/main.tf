@@ -85,50 +85,50 @@ module "velero_irsa_role" {
   tags = var.tags
 }
 
-# Déploiement de Velero avec Helm
-resource "helm_release" "velero" {
-  name       = "velero"
-  namespace  = "velero"
-  repository = "https://vmware-tanzu.github.io/helm-charts"
-  chart      = "velero"
-  version    = "2.30.1"  # Remplacez par la version souhaitée
+# # Déploiement de Velero avec Helm
+# resource "helm_release" "velero" {
+#   name       = "velero"
+#   namespace  = "velero"
+#   repository = "https://vmware-tanzu.github.io/helm-charts"
+#   chart      = "velero"
+#   version    = "2.30.1"  # Remplacez par la version souhaitée
 
-  create_namespace = true
+#   create_namespace = true
 
-  set {
-    name  = "configuration.provider"
-    value = "aws"
-  }
+#   set {
+#     name  = "configuration.provider"
+#     value = "aws"
+#   }
 
-  set {
-    name  = "configuration.backupStorageLocation.name"
-    value = "default"
-  }
+#   set {
+#     name  = "configuration.backupStorageLocation.name"
+#     value = "default"
+#   }
 
-  set {
-    name  = "configuration.backupStorageLocation.bucket"
-    value = var.bucket_name_velero
-  }
+#   set {
+#     name  = "configuration.backupStorageLocation.bucket"
+#     value = var.bucket_name_velero
+#   }
 
-  set {
-    name  = "configuration.backupStorageLocation.config.region"
-    value = var.region
-  }
+#   set {
+#     name  = "configuration.backupStorageLocation.config.region"
+#     value = var.region
+#   }
 
-  set {
-    name  = "configuration.volumeSnapshotLocation.name"
-    value = "default"
-  }
+#   set {
+#     name  = "configuration.volumeSnapshotLocation.name"
+#     value = "default"
+#   }
 
-  set {
-    name  = "configuration.volumeSnapshotLocation.config.region"
-    value = var.region
-  }
+#   set {
+#     name  = "configuration.volumeSnapshotLocation.config.region"
+#     value = var.region
+#   }
 
-  set {
-    name  = "serviceAccount.server.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.velero_irsa_role.role_arn
-  }
+#   set {
+#     name  = "serviceAccount.server.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = module.velero_irsa_role.role_arn
+#   }
 
-  depends_on = [module.velero_irsa_role, module.s3_bucket]
-}
+#   depends_on = [module.velero_irsa_role, module.s3_bucket]
+# }

@@ -5,7 +5,7 @@ module "vpc_and_subnets" {
   version = "5.5.2"
 
   # nom du VPC
-  name = var.vpc_name
+  name = "${var.vpc_name}-${var.environment}"
 
   # zones de disponibilité
   azs = var.azs
