@@ -60,7 +60,8 @@ module "s3_bucket" {
 
   versioning = {
     enabled = true
-  }
+  } 
+  # <-- mad this bucket persistent
 }
 
 
@@ -85,49 +86,102 @@ module "velero_irsa_role" {
   tags = var.tags
 }
 
-# # Déploiement de Velero avec Helm
+
+
+resource "local_file" "velero_values_yaml" {
+  filename = "${path.module}/generated_values.yaml"
+  content  = templatefile("${path.module}/values.yaml.tpl", {
+    bucket_name_velero            = var.bucket_name_velero,
+    region                        = var.region,
+    backup_schedule               = var.backup_schedule,
+    backup_ttl                    = var.backup_ttl,
+    velero_irsa_role_arn          = module.velero_irsa_role.iam_role_arn,
+    velero_plugin_image           = var.velero_plugin_image,
+    plugin_image_pull_policy      = var.plugin_image_pull_policy,
+  })
+}
+
+resource "helm_release" "velero" {
+  name       = "velero"
+  repository = "https://charts.vmware.com/velero"
+  chart      = "velero"
+  namespace  = "velero"
+  
+  create_namespace = true
+
+  values = [local_file.velero_values_yaml.content]
+
+  depends_on = [local_file.velero_values_yaml]
+}
+
+
+
+
+
+
 # resource "helm_release" "velero" {
 #   name       = "velero"
 #   namespace  = "velero"
 #   repository = "https://vmware-tanzu.github.io/helm-charts"
 #   chart      = "velero"
-#   version    = "2.30.1"  # Remplacez par la version souhaitée
+#   version    = "7.2.1"  # Remplacez par la version souhaitée
 
 #   create_namespace = true
 
+#   # upgrade_install = true
+#   # Configuration du backupStorageLocation avec S3
+#   # set {
+#   #   name  = "configuration.backupStorageLocation[0].name"
+#   #   value = "default"
+#   # }
+
 #   set {
-#     name  = "configuration.provider"
+#     name  = "configuration.backupStorageLocation[0].provider"
 #     value = "aws"
 #   }
 
 #   set {
-#     name  = "configuration.backupStorageLocation.name"
-#     value = "default"
-#   }
-
-#   set {
-#     name  = "configuration.backupStorageLocation.bucket"
+#     name  = "configuration.backupStorageLocation[0].bucket"
 #     value = var.bucket_name_velero
 #   }
 
 #   set {
-#     name  = "configuration.backupStorageLocation.config.region"
+#     name  = "configuration.backupStorageLocation[0].config.region"
 #     value = var.region
 #   }
 
+#   # Configuration du volumeSnapshotLocation
 #   set {
-#     name  = "configuration.volumeSnapshotLocation.name"
+#     name  = "configuration.volumeSnapshotLocation[0].name"
 #     value = "default"
 #   }
 
 #   set {
-#     name  = "configuration.volumeSnapshotLocation.config.region"
-#     value = var.region
+#     name  = "configuration.volumeSnapshotLocation[0].provider"
+#     value = "aws"
 #   }
 
 #   set {
+#     name  = "configuration.volumeSnapshotLocation[0].config.region"
+#     value = var.region
+#   }
+
+#   # Annotation pour lier le service account Velero au rôle IAM (via IRSA)
+#   set {
 #     name  = "serviceAccount.server.annotations.eks\\.amazonaws\\.com/role-arn"
-#     value = module.velero_irsa_role.role_arn
+#     value = module.velero_irsa_role.iam_role_arn
+#   }
+
+#   set {
+#     name  = "initContainers"
+#     value = <<-EOF
+#     - name: velero-plugin-for-aws
+#       image: velero/velero-plugin-for-aws:v1.10.0
+#       imagePullPolicy: IfNotPresent
+#       volumeMounts:
+#         - mountPath: /target
+#           name: plugins
+#     EOF
 #   }
 
 #   depends_on = [module.velero_irsa_role, module.s3_bucket]
