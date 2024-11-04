@@ -1,0 +1,33 @@
+
+github: # Needed for the job that clone custom plugins and mad share it via a PVC for all pods (lighter wp images)
+  wp_repo: $(wp_repo) # <-- USER/REPO_NAME ex: Apo-Louis/wordpress
+  branch: $(wp_branch)
+  token: $(wp_github_token)
+
+wordpress:
+
+  ingress:
+    enabled: $(wp_ingress_enabled) # <-- True or False
+    ingressClassName: $(wp_ingress_class_name)
+    annotations:
+      cert-manager.io/cluster-issuer: $(cluster_issuer_name)
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/ssl-redirect: true
+      nginx.ingress.kubernetes.io/proxy-body-size: 64m
+    hosts:
+      - host: $(wp_hostname)
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - $(wp_hostname)
+  env:
+    WORDPRESS_DB_HOST: $(db_host)
+    WORDPRESS_DB_USER: $(db_user)
+    WORDPRESS_DB_PASSWORD: $(db_password)
+    WORDPRESS_DB_NAME: $(db_name)
+
+  pvc:
+    size: $(wp_pvc_size)
+    storageClass: $(wp_storage_class)

@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${app_name}
+  namespace: ${argocd_namespace}
+spec:
+  project: ${argocd_project}
+  source:
+    repoURL: "${chart_repo_url}"
+    targetRevision: "${chart_revision}"
+    chart: ${chart_name}
+    helm:
+      valueFiles:
+        - ${value_file}
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: ${app_namespace}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  hooks:
+    - name: ${presync_job_name}
+      kind: Job
+      preSync: true
+      arguments:
+        parameters:
+          - name: COSIGN_IMAGE_REGISTRY
+            value: "${image_registry}"
+          - name: COSIGN_IMAGE_PROJECT
+            value: "${image_project}"
+          - name: COSIGN_IMAGE_NAME
+            value: "${image_name}"
+          - name: COSIGN_IMAGE_TAG
+            value: "${image_tag}"

@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${presync_job_name}
+  namespace: ${app_namespace}
+spec:
+  template:
+    spec:
+      containers:
+        - name: cosign
+          image: "${cosign_image}"
+          command: ["sh", "-c"]
+          args:
+            - |
+              cosign verify \
+                --key /cosign/cosign.pub \
+                ${COSIGN_IMAGE_REGISTRY}/${COSIGN_IMAGE_PROJECT}/${COSIGN_IMAGE_NAME}:${COSIGN_IMAGE_TAG} || exit 1
+          env:
+            - name: COSIGN_IMAGE_REGISTRY
+              value: "${image_registry}"
+            - name: COSIGN_IMAGE_PROJECT
+              value: "${image_project}"
+            - name: COSIGN_IMAGE_NAME
+              value: "${image_name}"
+            - name: COSIGN_IMAGE_TAG
+              value: "${image_tag}"
+          volumeMounts:
+            - name: cosign-key
+              mountPath: /cosign
+              readOnly: true
+      restartPolicy: Never
+      volumes:
+        - name: cosign-key
+          secret:
+            secretName: ${cosign_secret_name}
