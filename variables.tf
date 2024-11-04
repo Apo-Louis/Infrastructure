@@ -75,48 +75,43 @@ variable "cluster_prefix" {
   default     = ""
 }
 
-
-# Revoir pour la rendre plus DRY
 locals {
-  workers_config = var.environment == "prod" ? [
-    {
-      name           = "t3-medium-spot"
-      instance_types = ["t3.medium"]
-      capacity_type  = "SPOT"
-      disk_size      = 20
-      min_size       = 1
-      max_size       = 5
-      desired_size   = 3
-    },
-    # ON_DEMAND Type for production environment
-    # {
-    #   name           = "m5.large"
-    #   instance_types = ["m5.large"]
-    #   capacity_type  = "ON_DEMAND"
-    #   disk_size      = 50
-    #   min_size       = 2
-    #   max_size       = 6
-    #   desired_size   = 4
-    # }
-  ] : var.environment == "stage" ? [
-    {
-      name           = "t3-small-spot"
-      instance_types = ["t3.small"]
-      capacity_type  = "SPOT"
-      disk_size      = 20
-      min_size       = 1
-      max_size       = 3
-      desired_size   = 2
+  environment_settings = {
+    prod = {
+      instance_type = ["t5.large"]
+      capacity_type = "ON_DEMAND"
+      disk_size     = 50
+      min_size      = 4
+      max_size      = 8
+      desired_size  = 4
     }
-  ] : [
+    staging = {
+      instance_type = ["t3.large"]
+      capacity_type = "SPOT"
+      disk_size     = 20
+      min_size      = 2
+      max_size      = 4
+      desired_size  = 2
+    }
+    dev = {
+      instance_type = ["t3.medium"]
+      capacity_type = "SPOT"
+      disk_size     = 20
+      min_size      = 1
+      max_size      = 2
+      desired_size  = 1
+    }
+  }
+
+  workers_config = [
     {
-      name           = "t3-micro"
-      instance_types = ["t3.medium"]
-      capacity_type  = "SPOT"
-      disk_size      = 10
-      min_size       = 2
-      max_size       = 4
-      desired_size   = 2
+      name           = "${var.environment}-worker"
+      instance_types = local.environment_settings[var.environment].instance_type
+      capacity_type  = local.environment_settings[var.environment].capacity_type
+      disk_size      = local.environment_settings[var.environment].disk_size
+      min_size       = local.environment_settings[var.environment].min_size
+      max_size       = local.environment_settings[var.environment].max_size
+      desired_size   = local.environment_settings[var.environment].desired_size
     }
   ]
 }

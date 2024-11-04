@@ -165,3 +165,17 @@ https://aws.amazon.com/fr/blogs/containers/migrating-amazon-eks-clusters-from-gp
 - [ ] Ajouter l'addon gp3
 - [ ] Ajouter KubeArmor via helm chart
 - [ ] Utiliser sealed-secrets pour les secrets
+
+
+### 04/11 Point avec Lewis
+
+- Utiliser Gatekeeper pour la politique de sécurité (K8s)
+  - Restreindre les registery d'images docker privées 
+- Utiliser kubearmor pour la sécurité des conteneurs
+
+- Cosign : 0 Trust
+- Velero : 
+  - Capacité à backup et à restaurer
+- Wordpress / mariadb 
+  - Utiliser un seul dépot wordpress
+  - Faire un dependancy pour la base de donnée dans le chart

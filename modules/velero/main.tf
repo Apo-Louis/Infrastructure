@@ -103,7 +103,7 @@ resource "local_file" "velero_values_yaml" {
 
 resource "helm_release" "velero" {
   name       = "velero"
-  repository = "https://charts.vmware.com/velero"
+  repository = "https://vmware-tanzu.github.io/helm-charts"
   chart      = "velero"
   namespace  = "velero"
   

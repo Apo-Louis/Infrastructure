@@ -1,5 +1,3 @@
-# values.yaml.tpl
-
 configuration:
   backupStorageLocation:
     - name: default
