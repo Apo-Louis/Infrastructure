@@ -1,0 +1,4 @@
+#### Reste à faire
+
+- Finir main.tf et mariabd_values.yaml.tpl une fois le chart helm 100% fonctionnel
+- Voir si c'est vraiment possible de faire quelque chose avec cosign sinon laisser tomber

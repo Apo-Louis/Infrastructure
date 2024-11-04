@@ -1,5 +1,5 @@
 global:
-  domain: "$(hostname)"
+  domain: "$(argo_hostname)"
 
 configs:
   params:
@@ -9,9 +9,9 @@ server:
   ingress:
     enabled: true
     controller: generic
-    ingressClassName: $(ingress_class_name)
+    ingressClassName: $(argo_ingress_class_name)
     annotations:
-      cert-manager.io/cluster-issuer: $(cert_manager_issuer_name)
+      cert-manager.io/cluster-issuer: $(cluster_issuer_name)
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
