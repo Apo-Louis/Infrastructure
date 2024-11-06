@@ -21,7 +21,6 @@ variable "namespace" {
 
 variable "issuer_name" {
   description = "Name of the issuer"
-  default     = "letsencrypt-prod"
   type        = string
 }
 
