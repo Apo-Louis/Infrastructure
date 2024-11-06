@@ -1,20 +1,26 @@
-resource "kubernetes_manifest" "nginx_crds" {
-  manifest = yamldecode(
-    filebase64(
-      "https://raw.githubusercontent.com/nginxinc/kubernetes-ingress/${var.crds_version}/deploy/crds.yaml"
-    )
-  )
-}
-
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  chart      = "oci://ghcr.io/nginxinc/charts/nginx-ingress"
-  version    = var.chart_version
-  namespace  = "nginx-ingress"
-
-  values = [
-    file("nginx-values.yaml")
-  ]
-
+resource "helm_release" "nginx-ingress-controller-chart" {
+  name             = "nginx-ingress-controller"
+  namespace        = var.namespace
   create_namespace = true
+
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "nginx-ingress-controller"
+  version    = var.chart_version
+
+  # https://kubernetes.github.io/ingress-nginx/deploy/#aws
+  # Idle timeout value for TCP flows is 350 seconds and cannot be modified.
+  # For this reason, you need to ensure the keepalive_timeout value is configured less than 350 seconds to work as expected.
+  timeout = 600
+
+  set {
+    name  = "service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "replicaCount"
+    value = var.replica_count
+  }
 }
+
+
