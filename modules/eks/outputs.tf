@@ -1,34 +1,40 @@
-output "kubeconfig_certificate_authority_data" {
+output "cluster_certificate_authority_data" {
   description = "Base64 encoded certificate data required to communicate with the cluster"
-  value       = module.eks.cluster_certificate_authority_data
+  value       = module.eks_cluster.cluster_certificate_authority_data
 }
 
-output "eks_cluster_endpoint" {
+output "cluster_endpoint" {
   description = "Endpoint for your Kubernetes API server"
-  value       = module.eks.cluster_endpoint
+  value       = module.eks_cluster.cluster_endpoint
 }
 
-output "eks_cluster_name" {
+output "cluster_name" {
   description = "Nom du cluster EKS"
-  value       = module.eks.cluster_name
+  value       = module.eks_cluster.cluster_name
 }
 
-output "eks_cluster_id" {
+output "cluster_id" {
   description = "Identifiant du cluster EKS"
-  value       = module.eks.cluster_id
+  value       = module.eks_cluster.cluster_id
 }
 
-output "eks_cluster_version" {
+output "cluster_version" {
   description = "Version du cluster EKS"
-  value       = module.eks.cluster_version
+  value       = module.eks_cluster.cluster_version
 }
 
-output "eks_oidc_provider_url" {
+output "oidc_provider_url" {
   description = "URL du openid connect provider"
-  value       = module.eks.cluster_oidc_issuer_url
+  value       = module.eks_cluster.cluster_oidc_issuer_url
 }
 
-output "eks_oidc_provider_arn" {
+output "oidc_provider_arn" {
   description = "ARN du openid connect provider"
-  value       = module.eks.oidc_provider_arn
+  value       = module.eks_cluster.oidc_provider_arn
+}
+
+
+output "kubeconfig" {
+    description = "kubeconfig path needed for other modules after generated"
+    value = var.kubeconfig_path
 }

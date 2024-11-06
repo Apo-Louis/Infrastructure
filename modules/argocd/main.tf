@@ -22,7 +22,6 @@ resource "kubernetes_manifest" "harbor_repo" {
     username  = var.harbor_username
   })
   depends_on = [helm_release.my_argo_cd]
-
 }
 
 resource "local_file" "mariadb_values" {

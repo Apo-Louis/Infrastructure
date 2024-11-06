@@ -1,4 +1,4 @@
-module "eks" {
+module "eks_cluster" {
     source  = "terraform-aws-modules/eks/aws"
     version = "~> 20.0"
 
@@ -53,5 +53,5 @@ resource "null_resource" "kubeconfig" {
         command = "aws eks update-kubeconfig --name ${var.cluster_name} --alias ${var.cluster_name} --kubeconfig ${var.kubeconfig_path}"
     }
 
-    depends_on = [module.eks]
+    depends_on = [module.eks_cluster]
 }

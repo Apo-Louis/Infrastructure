@@ -1,0 +1,33 @@
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: wordpress-velero-backup-bucket
+      config:
+        region: eu-west-3
+
+  volumeSnapshotLocation:
+    - name: default
+      provider: aws
+      config:
+        region: eu-west-3
+
+schedules:
+  cluster-backup:
+    schedule: "0 0 * * *"
+    template:
+      ttl: "240h"
+      storageLocation: default
+
+serviceAccount:
+  server:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::284445534808:role/eks-wordpress-velero-role"
+
+initContainers:
+  - name: velero-plugin-for-aws
+    image: "velero/velero-plugin-for-aws:v1.10.0"
+    imagePullPolicy: "IfNotPresent"
+    volumeMounts:
+      - mountPath: /target
+        name: plugins

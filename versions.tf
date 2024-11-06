@@ -9,12 +9,16 @@ terraform {
   #   encrypt        = true
   # }
 
-  required_version = ">=1.7"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
+    }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.13.0"
     }
 
     local = {
@@ -25,6 +29,11 @@ terraform {
     tls = {
       source  = "hashicorp/tls"
       version = "~> 4.0"
+    }
+    
+    kubectl = {
+      source = "gavinbunney/kubectl"  # Correct source
+      version = "1.14.0"
     }
   }
 }

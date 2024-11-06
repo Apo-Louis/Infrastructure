@@ -1,4 +1,3 @@
-
 github: # Needed for the job that clone custom plugins and mad share it via a PVC for all pods {lighter wp images}
   repo: ${github_repo} # <-- USER/REPO_NAME ex: Apo-Louis/wordpress
   branch: ${github__branch}

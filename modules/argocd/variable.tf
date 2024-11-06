@@ -1,8 +1,3 @@
-variable "argocd_namespace" {
-  description = "Namespace where ArgoCD is deployed"
-  type        = string
-}
-
 variable "harbor_url" {
   description = "The URL of the Harbor registry"
   type        = string
@@ -11,7 +6,7 @@ variable "harbor_url" {
 variable "harbor_username" {
   description = "Username for the Harbor robot"
   type        = string
-  sensitive = true
+  sensitive   = true
 }
 
 variable "harbor_password" {
@@ -23,7 +18,7 @@ variable "harbor_password" {
 variable "robot_email" {
   description = "Email associated with the Harbor robot"
   type        = string
-  default     = ""  # Optionnel
+  default     = "" # Optionnel
 }
 
 
@@ -51,10 +46,6 @@ variable "cluster_issuer_name" {
 }
 
 
-variable "cosign_secret_name" {
-  description = "The name of the Cosign Secret used for signing images." # Add before with cosign module
-  type        = string
-}
 
 variable "destination_server" {
   description = "The destination server to which Argo CD will connect."
@@ -70,6 +61,7 @@ variable "environment_namespace" {
 variable "job_name" {
   description = "Name of the job to be created."
   type        = string
+  default     = "pre-sync-job"
 }
 
 
