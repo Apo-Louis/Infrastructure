@@ -10,5 +10,5 @@ spec:
     namespaces:
       - ${namespace}
   parameters:
-    repos: ${allowed_repo_list} # <-- Make sure to be a list variable
-
+    repos:
+      ${repos_list}

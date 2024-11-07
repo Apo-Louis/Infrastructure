@@ -1,6 +1,7 @@
 variable "namespace" {
   description = "Name of the namespace for kubearmor"
   type        = string
+  default     = "kubearmor"
 }
 
 

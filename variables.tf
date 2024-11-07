@@ -70,7 +70,7 @@ variable "cluster_prefix" {
 locals {
   environment_settings = {
     prod = {
-      instance_type = ["t5.large"]
+      instance_type = ["t3.large"]
       capacity_type = "ON_DEMAND"
       disk_size     = 50
       min_size      = 4
@@ -89,9 +89,9 @@ locals {
       instance_type = ["t3.medium"]
       capacity_type = "SPOT"
       disk_size     = 20
-      min_size      = 1
-      max_size      = 2
-      desired_size  = 1
+      min_size      = 2
+      max_size      = 3
+      desired_size  = 2
     }
   }
 
