@@ -1,0 +1,33 @@
+
+# Description
+#
+# Containers run with a default set of capabilities as assigned by the Container Runtime.
+# Capabilities are parts of the rights generally granted on a Linux system to the root user.
+# In many cases applications running in containers do not require any capabilities to operate,
+# so from the perspective of the principal of least privilege use of capabilities should be minimized.
+
+# Attack Scenario
+#
+# Kubernetes by default connects all the containers running in the same node
+# (even if they belong to different namespaces) down to Layer 2 (ethernet).
+# Every pod running in the same node is going to be able to communicate with any other pod in the same node
+# (independently of the namespace) at ethernet level (layer 2).
+# This allows a malicious containers to perform an ARP spoofing attack to the containers
+# on the same node and capture their traffic.
+# Attack Type Reconnaissance, Spoofing
+# Actual Attack Recon through P.A.S. Webshell, NBTscan
+
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: ksp-app-pcap-net-raw-block
+  namespace: ${app_namespace}
+spec:
+  severity: 1
+  selector:
+    matchLabels: {}
+  capabilities:
+    matchCapabilities:
+    - capability: net_raw
+  action:
+    Block

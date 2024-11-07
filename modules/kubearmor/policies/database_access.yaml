@@ -1,0 +1,40 @@
+# Description
+#
+# Applications use databases to store all the information such as posts, blogs,
+# user information, etc. WordPress applications almost certainly use a MySQL
+# database for storing their content, and those are usually stored elsewhere
+# on the system, often /var/lib/mysql/some_db_name.
+
+# Attack Scenario
+#
+# Adversaries have been known to use various techniques to steal information
+# from databases. This information can include user credentials, posts, blogs,
+# and more. By obtaining this information, adversaries can gain access to user
+# accounts and potentially perform a full-account takeover, which can lead to
+# further compromise of the target system. It's important to ensure that appropriate
+# security measures are in place to protect against these types of attacks.
+# Attack Type SQL Injection, Credential Access, Account Takeover
+# Actual Attack Yahoo Voices Data Breach in 2012
+
+
+
+
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: ksp-block-mysql-dir
+  namespace: ${app_namespace}
+spec:
+  message: Alert! Attempt to make changes to database detected
+  tags:
+  - CIS
+  - CIS_Linux
+  selector:
+    matchLabels: {}
+  file:
+    matchDirectories:
+    - dir: /var/lib/mysql/
+      ownerOnly: true
+      readOnly: true
+      severity: 1
+      action: Block
