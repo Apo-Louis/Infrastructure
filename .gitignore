@@ -1,3 +1,4 @@
+test/
 .terraform/
 *.tfstate*
 *.tfvars
@@ -6,4 +7,5 @@
 *.log
 *.txt
 Lewis/*
-ouputs/
+outputs/*
+!outputs/.gitkeep
