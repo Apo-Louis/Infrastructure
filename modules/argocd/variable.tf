@@ -105,11 +105,6 @@ variable "wp_pvc_size" {
   default     = "10Gi"
 }
 
-variable "wp_storage_class" {
-  description = "The storage class to use for the WordPress PVC."
-  type        = string
-  default     = "default"
-}
 
 # Pour db_host recuperer directement à partir de la resources application crée pour mariadb (name)
 
@@ -144,6 +139,16 @@ variable "db_name" {
   type        = string
 }
 
+variable "db_pvc_size" {
+    description = "The size of the PersistentVolumeClaim for database"
+    type = string
+    default = "50Gi"
+}
 # <--- Terminé les variables après avoir refait le chart helm de mariadb
 
+##### EFS StorageClass Needed for wp-content & mariadb
 
+variable "storage_class" {
+    description = "EFS StorageClass Needed for wp-content & mariadb"
+    type = string
+}

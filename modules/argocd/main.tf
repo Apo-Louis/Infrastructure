@@ -1,5 +1,5 @@
 
-resource "helm_release" "my_argo_cd" {
+resource "helm_release" "argocd" {
   name    = "argo-cd"
   chart   = "argo-cd"
   version = "7.6.10"
@@ -14,15 +14,16 @@ resource "helm_release" "my_argo_cd" {
   ]
 }
 
-resource "kubernetes_manifest" "harbor_repo" {
-  manifest = templatefile("${path.module}/harbor_repo.yaml", {
+resource "kubectl_manifest" "harbor_repo" {
+  yaml_body = templatefile("${path.module}/harbor_repo.yaml", {
     namespace = var.argo_namespace
     url       = var.harbor_url
     password  = var.harbor_password
     username  = var.harbor_username
   })
-  depends_on = [helm_release.my_argo_cd]
+  depends_on = [helm_release.argocd]
 }
+
 
 resource "local_file" "mariadb_values" {
   filename = "${path.module}/mariadb_values.yaml"
@@ -32,8 +33,29 @@ resource "local_file" "mariadb_values" {
     db_password      = var.db_password
     db_name          = var.db_name
     db_root_password = var.db_root_password
+    db_pvc_size      = var.db_pvc_size
+    storage_class    = var.storage_class
+
   })
+  depends_on = [helm_release.argocd]
+
 }
+
+
+resource "kubectl_manifest" "mariadb" {
+  app_name           = "mariadb"
+  namespace          = var.argo_namespace
+  chart_repo_url     = "${var.harbor_url}/mariadb"
+  chart_revision     = "HEAD"
+  chart_name         = "mariadb"
+  value_file         = local_file.mariadb_values.filename
+  destination_server = var.destination_server
+  app_namespace      = var.environment_namespace
+
+  depends_on = [helm_release.argocd, local_file.mariadb_values]
+}
+
+
 
 # Loop pour wordpress & mariadb
 resource "local_file" "wordpress_values" {
@@ -54,12 +76,12 @@ resource "local_file" "wordpress_values" {
     db_name     = var.db_name
 
     pvc_size      = var.wp_pvc_size
-    storage_class = var.wp_storage_class
+    storage_class = var.storage_class
   })
 }
 
-resource "kubernetes_manifest" "wordpress" {
-  manifest = templatefile("${path.module}/application_manifest.yaml", {
+resource "kubectl_manifest" "wordpress" {
+  yaml_body = templatefile("${path.module}/application_manifest.yaml", {
     app_name           = "wordpress"
     namespace          = var.argo_namespace
     chart_repo_url     = "${var.harbor_url}/wordpress"
@@ -71,4 +93,3 @@ resource "kubernetes_manifest" "wordpress" {
     # presync_job_name = var.job_name
   })
 }
-

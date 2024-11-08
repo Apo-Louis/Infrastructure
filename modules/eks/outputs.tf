@@ -34,7 +34,12 @@ output "oidc_provider_arn" {
 }
 
 
+output "efs_storage_class" {
+  description = "Storage Class for shared pv (needed for wp-content & mariadb database"
+  value       = var.efs_storage_class
+}
+
 output "kubeconfig" {
-    description = "kubeconfig path needed for other modules after generated"
-    value = var.kubeconfig_path
+  description = "kubeconfig path needed for other modules after generated"
+  value       = var.kubeconfig_path
 }

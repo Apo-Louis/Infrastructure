@@ -1,9 +1,9 @@
 # configuration de terraform
 terraform {
-    
+
   required_providers {
     kubectl = {
-      source = "gavinbunney/kubectl"  # Correct source
+      source = "gavinbunney/kubectl"
       version = "1.14.0"
     }
   }

@@ -7,7 +7,7 @@ resource "helm_release" "gatekeeper" {
   version    = "3.17.1"
   name       = "gatekeeper"
 
-    namespace = "gatekeeper-system"
+  namespace        = "gatekeeper-system"
   create_namespace = true
 }
 
@@ -34,6 +34,7 @@ resource "kubectl_manifest" "nodeport_policy" {
 
   yaml_body = templatefile("${path.module}/policies/block-nodeport.yaml", {
     app_namespace = var.app_namespace
+    depends_on    = [helm_release.gatekeeper]
   })
 }
 
