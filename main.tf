@@ -10,11 +10,11 @@ module "vpc_and_subnets" {
   tags                 = var.tags
   additional_public_subnet_tags = {
     "kubernetes.io/cluster/${var.cluster_prefix}${var.eks_cluster_name}-${var.environment}" = "owned"
-    "kubernetes.io/role/elb"                                             = "1"
+    "kubernetes.io/role/elb"                                                                = "1"
   }
   additional_private_subnet_tags = {
     "kubernetes.io/cluster/${var.cluster_prefix}${var.eks_cluster_name}-${var.environment}" = "owned"
-    "kubernetes.io/role/internal-elb"                                    = "1"
+    "kubernetes.io/role/internal-elb"                                                       = "1"
   }
 }
 
@@ -33,13 +33,13 @@ module "eks" {
 
 resource "kubectl_manifest" "environment_namespace" {
 
-    yaml_body = <<YAML
+  yaml_body  = <<YAML
     apiVersion: v1
     kind: Namespace
     metadata:
         name: ${var.environment_namespace}
     YAML
-    depends_on = [ module.eks ]
+  depends_on = [module.eks]
 }
 
 # Configuration pour autoscaler
@@ -58,14 +58,14 @@ module "velero" {
   eks_cluster_name      = "${var.cluster_prefix}${var.eks_cluster_name}"
   eks_oidc_provider_arn = module.eks.oidc_provider_arn
   tags                  = var.tags
-  depends_on = [ module.eks ]
+  depends_on            = [module.eks]
 }
 
 
 module "nginx-ingress" {
-  source     = "./modules/nginx-ingress"
+  source          = "./modules/nginx-ingress"
   kubeconfig_path = var.kubeconfig_path
-  depends_on = [ module.eks ]
+  depends_on      = [module.eks]
 }
 
 module "cert-manager" {
@@ -75,55 +75,60 @@ module "cert-manager" {
   ovh_consumer_key       = var.ovh_consumer_key
   issuer_name            = "letsencrypt-${var.environment}"
   email                  = var.email
-  depends_on = [ module.eks, module.vpc_and_subnets ]
+  depends_on             = [module.eks, module.vpc_and_subnets]
 }
 
-#
-# module "argocd" {
-#   source = "./modules/argocd" # Modifiez le chemin source selon votre structure de projet
-#
-#   # Variables pour Harbor
-#   harbor_url      = var.harbor_url
-#   harbor_username = var.harbor_username
-#   harbor_password = var.harbor_password
-#   robot_email     = var.robot_email
-#
-#   # Variables pour ArgoCD
-#   argo_hostname            = var.argo_hostname
-#   argo_ingress_class_name  = module.nginx-ingress.ingress_name
-#   cluster_issuer_name      = module.cert-manager.issuer_name
-#   environment_namespace    = var.environment
-#   job_name                 = var.job_name
-#
-#   # Variables pour WordPress
-#   wp_github_repo        = var.wp_github_repo
-#   wp_github_branch      = var.wp_github_branch
-#   wp_github_token       = var.wp_github_token
-#   wp_ingress_class_name = var.wp_ingress_class_name
-#   wp_hostname           = var.wp_hostname
-#
-#   # Variables pour la base de données
-#   db_host         = var.db_host
-#   db_root_password = var.db_root_password
-#   db_user         = var.db_user
-#   db_password     = var.db_password
-#   db_name         = var.db_name
 
-#    storage_class =  module.eks.efs_storage_class
-# }
+module "argocd" {
+  source = "./modules/argocd"
+
+  docker_username = var.docker_username
+  docker_password = var.docker_password
+  docker_email    = var.docker_email
+
+
+
+  argo_hostname         = var.argo_hostname
+  cluster_issuer        = module.cert-manager.issuer_name
+  environment_namespace = var.environment
+
+  wordpress_repo       = var.wordpress_repo
+  wordpress_repo_token = var.wordpress_repo_token
+  wordpress_branch     = var.wordpress_branch
+
+  storage_class         = module.eks.efs_storage_class
+  mariadb_root_password = var.mariadb_root_password
+  database_name         = var.database_name
+  database_username     = var.database_username
+  database_password     = var.database_password
+
+  wordpress_hostname = var.wordpress_hostname
+
+  wordpress_site_title     = var.wordpress_site_title
+  wordpress_admin_user     = var.wordpress_admin_user
+  wordpress_admin_password = var.wordpress_admin_password
+  wordpress_admin_email    = var.wordpress_admin_email
+
+  # Recuperer via le module qui cree le registry
+  docker_image_pull_secrets = ""
+
+  ingress_class = module.nginx-ingress.ingress_name
+
+}
+
 
 
 module "gatekeeper" {
-    source = "./modules/gatekeeper"
-    app_namespace = var.environment_namespace
+  source        = "./modules/gatekeeper"
+  app_namespace = var.environment_namespace
 
-    depends_on = [ module.eks, kubectl_manifest.environment_namespace ]
+  depends_on = [module.eks, kubectl_manifest.environment_namespace]
 }
 
 module "kubearmor" {
-    source = "./modules/kubearmor"
+  source = "./modules/kubearmor"
 
-    app_namespace = var.environment_namespace
+  app_namespace = var.environment_namespace
 
-    depends_on = [ module.eks, kubectl_manifest.environment_namespace ]
+  depends_on = [module.eks, kubectl_manifest.environment_namespace]
 }

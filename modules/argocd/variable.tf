@@ -1,24 +1,20 @@
-variable "harbor_url" {
-  description = "The URL of the Harbor registry"
-  type        = string
-}
 
-variable "harbor_username" {
-  description = "Username for the Harbor robot"
+variable "docker_username" {
+  description = "Docker username for private registry"
   type        = string
   sensitive   = true
 }
 
-variable "harbor_password" {
-  description = "Password for the Harbor robot"
+variable "docker_password" {
+  description = "Docker password for private registry"
   type        = string
   sensitive   = true
 }
 
-variable "robot_email" {
-  description = "Email associated with the Harbor robot"
+variable "docker_email" {
+  description = "Docker email for private registry"
   type        = string
-  default     = "" # Optionnel
+  sensitive   = true
 }
 
 
@@ -29,20 +25,10 @@ variable "argo_hostname" {
   type        = string
 }
 
-variable "argo_ingress_class_name" {
-  description = "The name of the IngressClass resource to use for this ingress controller."
-  type        = string
-}
-
 variable "argo_namespace" {
   description = "The namespace in which to deploy the ingress controller."
   type        = string
   default     = "argocd"
-}
-
-variable "cluster_issuer_name" {
-  description = "The name of the Cert-Manager issuer to use for generating certificates."
-  type        = string
 }
 
 
@@ -58,97 +44,131 @@ variable "environment_namespace" {
   type        = string
 }
 
-variable "job_name" {
-  description = "Name of the job to be created."
+
+
+
+# Variables Github
+variable "wordpress_repo" {
   type        = string
-  default     = "pre-sync-job"
+  description = "URL du dépôt WordPress"
+  default = "Apo-Louis/wordpress"
 }
 
-
-######### Wordpress
-
-variable "wp_github_repo" {
-  description = "The GitHub repository for the WordPress plugins and themes."
-  type        = string
-}
-
-variable "wp_github_branch" {
-  description = "The branch of the GitHub repository to use for WordPress content."
-  type        = string
-  default     = "main"
-}
-
-variable "wp_github_token" {
-  description = "GitHub personal access token with read permissions for the repository."
-  type        = string
-}
-
-variable "wp_ingress_enabled" {
-  description = "Enable or disable Ingress for WordPress."
-  type        = bool
-  default     = true
-}
-
-variable "wp_ingress_class_name" {
-  description = "The name of the IngressClass to use for the WordPress ingress."
-  type        = string
-}
-
-variable "wp_hostname" {
-  description = "The hostname for the WordPress ingress."
-  type        = string
-}
-
-variable "wp_pvc_size" {
-  description = "The size of the PersistentVolumeClaim for WordPress data."
-  type        = string
-  default     = "10Gi"
-}
-
-
-# Pour db_host recuperer directement à partir de la resources application crée pour mariadb (name)
-
-
-######### db
-
-variable "db_host" {
-  description = "The host for the db database."
-  type        = string
-  default     = "mariadb"
-}
-
-variable "db_root_password" {
-  description = "The root password for the db database."
-  type        = string
-  sensitive   = true
-}
-
-variable "db_user" {
-  description = "The username for the db database user."
-  type        = string
-}
-
-variable "db_password" {
-  description = "The password for the db database user."
-  type        = string
-  sensitive   = true
-}
-
-variable "db_name" {
-  description = "The name of the db database to create."
-  type        = string
-}
-
-variable "db_pvc_size" {
-    description = "The size of the PersistentVolumeClaim for database"
+variable "wordpress_repo_token" {
     type = string
-    default = "50Gi"
+    description = "Token generate from GitHub"
+    sensitive = true
 }
-# <--- Terminé les variables après avoir refait le chart helm de mariadb
+variable "wordpress_branch" {
+  type        = string
+  description = "Branche du dépôt WordPress à utiliser"
+  default = "main"
+}
 
-##### EFS StorageClass Needed for wp-content & mariadb
-
+# Variables MariaDB
 variable "storage_class" {
-    description = "EFS StorageClass Needed for wp-content & mariadb"
-    type = string
+  type        = string
+  description = "Classe de stockage à utiliser"
+  default = "default"
+}
+
+variable "mariadb_root_password" {
+  type        = string
+  description = "Mot de passe root MariaDB"
+  sensitive   = true
+}
+
+variable "database_name" {
+  type        = string
+  description = "Nom de la base de données WordPress"
+  default = "wordpressdb"
+}
+
+variable "database_username" {
+  type        = string
+  description = "Nom d'utilisateur de la base de données"
+  default = "wordpress"
+}
+
+variable "database_password" {
+  type        = string
+  description = "Mot de passe de la base de données"
+  sensitive   = true
+  default = "password"
+}
+
+variable "mariadb_volume_size" {
+  type        = string
+  description = "Taille du volume MariaDB"
+  default = "10Gi"
+}
+
+# Variables WordPress
+variable "wordpress_site_title" {
+  type        = string
+  description = "Titre du site WordPress"
+  default = "Fil Rouge Project Wordpress"
+  }
+
+variable "wordpress_admin_user" {
+  type        = string
+  description = "Nom d'utilisateur administrateur WordPress"
+  default = "admin"
+}
+
+variable "wordpress_admin_password" {
+  type        = string
+  description = "Mot de passe administrateur WordPress"
+  sensitive   = true
+  default = "password"
+}
+
+variable "wordpress_admin_email" {
+  type        = string
+  description = "Email de l'administrateur WordPress"
+  default = "admin@example.com"
+}
+
+variable "docker_image" {
+  type        = string
+  description = "Repository de l'image Docker WordPress"
+  default = "apoolouis8/wordpress"
+}
+
+variable "docker_tag" {
+  type        = string
+  description = "Tag de l'image Docker WordPress"
+  default = "prod-1.0.0"
+}
+
+# Import from Terraform Registry Configuration
+ variable "docker_image_pull_secrets" {
+  type        = string
+  description = "Secrets pour pull l'image Docker"
+}
+
+# Variables Ingress
+variable "ingress_class" {
+  type        = string
+  description = "Classe d'ingress à utiliser"
+  default = "nginx"
+}
+
+variable "cluster_issuer" {
+  type        = string
+  description = "Nom du cluster-issuer cert-manager"
+  default = "letsencrypt"
+}
+
+variable "wordpress_hostname" {
+  type        = string
+  description = "Nom d'hôte pour WordPress"
+  default = "filrouge-wp.apoland.net"
+}
+
+
+variable "wordpress_tls_secret_name" {
+  type        = string
+  description = "Nom du secret TLS pour WordPress"
+  default = "wp-tls"
 }

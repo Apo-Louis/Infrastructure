@@ -21,6 +21,9 @@ schedules:
 
 serviceAccount:
   server:
+    create: true
+    name: velero
+
     annotations:
       eks.amazonaws.com/role-arn: "${velero_irsa_role_arn}"
 

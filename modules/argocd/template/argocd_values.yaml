@@ -9,9 +9,9 @@ server:
   ingress:
     enabled: true
     controller: generic
-    ingressClassName: $(argo_ingress_class_name)
+    ingressClassName: $(ingress_class)
     annotations:
-      cert-manager.io/cluster-issuer: $(cluster_issuer_name)
+      cert-manager.io/cluster-issuer: $(cluster_issuer)
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"

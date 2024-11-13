@@ -1,0 +1,9 @@
+configs:
+  repositories:
+    wordpress:
+      name: wordpress
+      url: '${ wordpress_repo }'
+      type: git
+      username: git
+      password: '${ wordpress_repo_token}' # <-- Use token
+

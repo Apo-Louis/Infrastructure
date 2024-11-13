@@ -149,44 +149,49 @@ variable "email" {
 # module argo-cd
 ###################################
 
-# Variables pour Harbor
-variable "harbor_url" {
-  description = "The URL of the Harbor registry"
-  type        = string
-}
 
-variable "harbor_username" {
-  description = "Username for the Harbor robot"
+variable "docker_username" {
+  description = "Docker username for private registry"
   type        = string
   sensitive   = true
 }
 
-variable "harbor_password" {
-  description = "Password for the Harbor robot"
+variable "docker_password" {
+  description = "Docker password for private registry"
   type        = string
   sensitive   = true
 }
 
-variable "robot_email" {
-  description = "Email associated with the Harbor robot"
+variable "docker_email" {
+  description = "Docker email for private registry"
   type        = string
-  default     = ""  # Optionnel
+  sensitive   = true
 }
 
-# Variables pour ArgoCD
+
+
 variable "argo_hostname" {
   description = "The hostname that will be used by the Ingress resource for routing traffic."
   type        = string
 }
 
-variable "argo_ingress_class_name" {
-  description = "The name of the IngressClass resource to use for this ingress controller."
+variable "argo_namespace" {
+  description = "The namespace in which to deploy the ingress controller."
+  type        = string
+  default     = "argocd"
+}
+
+variable "cluster_issuer" {
+  description = "The name of the Cert-Manager issuer to use for generating certificates."
   type        = string
 }
 
-variable "cluster_issuer_name" {
-  description = "The name of the Cert-Manager issuer to use for generating certificates."
+
+
+variable "destination_server" {
+  description = "The destination server to which Argo CD will connect."
   type        = string
+  default     = "https://kubernetes.default.svc"
 }
 
 variable "environment_namespace" {
@@ -194,63 +199,91 @@ variable "environment_namespace" {
   type        = string
 }
 
-variable "job_name" {
-  description = "Name of the job to be created."
+
+
+
+variable "wordpress_repo" {
   type        = string
+  description = "URL du dépôt WordPress"
+  default = "Apo-Louis/wordpress"
 }
 
-# Variables pour WordPress
-variable "wp_github_repo" {
-  description = "The GitHub repository for the WordPress plugins and themes."
+variable "wordpress_repo_token" {
+    type = string
+    description = "Token generate from GitHub"
+    sensitive = true
+}
+variable "wordpress_branch" {
   type        = string
+  description = "Branche du dépôt WordPress à utiliser"
+  default = "main"
 }
 
-variable "wp_github_branch" {
-  description = "The branch of the GitHub repository to use for WordPress content."
+variable "storage_class" {
   type        = string
-  default     = "main"
+  description = "Classe de stockage à utiliser"
+  default = "default"
 }
 
-variable "wp_github_token" {
-  description = "GitHub personal access token with read permissions for the repository."
+variable "mariadb_root_password" {
   type        = string
-}
-
-variable "wp_ingress_class_name" {
-  description = "The name of the IngressClass to use for the WordPress ingress."
-  type        = string
-}
-
-variable "wp_hostname" {
-  description = "The hostname for the WordPress ingress."
-  type        = string
-}
-
-# Variables pour la base de données
-variable "db_host" {
-  description = "The host for the db database."
-  type        = string
-  default     = "mariadb"
-}
-
-variable "db_root_password" {
-  description = "The root password for the db database."
-  type        = string
+  description = "Mot de passe root MariaDB"
   sensitive   = true
 }
 
-variable "db_user" {
-  description = "The username for the db database user."
+variable "database_name" {
   type        = string
+  description = "Nom de la base de données WordPress"
+  default = "wordpressdb"
 }
 
-variable "db_password" {
-  description = "The password for the db database user."
+variable "database_username" {
   type        = string
+  description = "Nom d'utilisateur de la base de données"
+  default = "wordpress"
+}
+
+variable "database_password" {
+  type        = string
+  description = "Mot de passe de la base de données"
   sensitive   = true
+  default = "password"
 }
 
-variable "db_name" {
-  description = "The name of the db database to create."
+variable "wordpress_hostname" {
   type        = string
+  description = "Nom d'hôte pour WordPress"
+  default = "filrouge-wp.apoland.net"
+}
+
+# Variables WordPress
+variable "wordpress_site_title" {
+  type        = string
+  description = "Titre du site WordPress"
+  default = "Fil Rouge Project Wordpress"
+}
+
+variable "wordpress_admin_user" {
+  type        = string
+  description = "Nom d'utilisateur administrateur WordPress"
+  default = "admin"
+}
+
+variable "wordpress_admin_password" {
+  type        = string
+  description = "Mot de passe administrateur WordPress"
+  sensitive   = true
+  default = "password"
+}
+
+variable "wordpress_admin_email" {
+  type        = string
+  description = "Email de l'administrateur WordPress"
+  default = "admin@example.com"
+}
+
+# Import from Terraform Registry Configuration
+ variable "docker_image_pull_secrets" {
+  type        = string
+  description = "Secrets pour pull l'image Docker"
 }
