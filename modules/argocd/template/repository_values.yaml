@@ -1,9 +1,13 @@
-configs:
-  repositories:
-    wordpress:
-      name: wordpress
-      url: '${ wordpress_repo }'
-      type: git
-      username: git
-      password: '${ wordpress_repo_token}' # <-- Use token
-
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ${name}
+  namespace: ${namespace}
+  labels:
+    argocd.argoproj.io/secret-type: repository
+type: Opaque
+stringData:
+  type: git
+  url: ${repo_url}
+  password: ${repo_password}
+  username: git

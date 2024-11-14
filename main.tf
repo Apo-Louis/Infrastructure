@@ -25,6 +25,7 @@ module "eks" {
   cluster_name             = "${var.cluster_prefix}${var.eks_cluster_name}-${var.environment}"
   cluster_version          = var.k8s_version
   worker_subnet_ids        = module.vpc_and_subnets.private_subnets
+  worker_subnet_cidr       = var.private_subnets_cidr
   control_plane_subnet_ids = concat(module.vpc_and_subnets.public_subnets, module.vpc_and_subnets.private_subnets)
   tags                     = var.tags
   kubeconfig_path          = var.kubeconfig_path
@@ -86,7 +87,8 @@ module "argocd" {
   docker_password = var.docker_password
   docker_email    = var.docker_email
 
-
+  domain_name  = var.domain_name
+  eks_endpoint = replace(module.eks.cluster_endpoint, "https://", "")
 
   argo_hostname         = var.argo_hostname
   cluster_issuer        = module.cert-manager.issuer_name
@@ -109,11 +111,11 @@ module "argocd" {
   wordpress_admin_password = var.wordpress_admin_password
   wordpress_admin_email    = var.wordpress_admin_email
 
-  # Recuperer via le module qui cree le registry
-  docker_image_pull_secrets = ""
+  # ingress_class = module.nginx-ingress.ingress_name
+  ingress_class = "nginx"
+  external_ip   = module.nginx-ingress.external_ip
 
-  ingress_class = module.nginx-ingress.ingress_name
-
+  depends_on = [module.eks, module.nginx-ingress, module.cert-manager, kubectl_manifest.environment_namespace]
 }
 
 

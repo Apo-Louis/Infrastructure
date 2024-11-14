@@ -1,8 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ${presync_job_name}
-  namespace: ${namespace}
+  name: '${presync_job_name}'
+  namespace: '${namespace}'
 spec:
   template:
     spec:

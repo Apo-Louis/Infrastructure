@@ -148,7 +148,10 @@ variable "email" {
 ###################################
 # module argo-cd
 ###################################
-
+variable "domain_name" {
+    description = "Domain used for the ingress setup"
+    type = string
+}
 
 variable "docker_username" {
   description = "Docker username for private registry"
@@ -179,11 +182,6 @@ variable "argo_namespace" {
   description = "The namespace in which to deploy the ingress controller."
   type        = string
   default     = "argocd"
-}
-
-variable "cluster_issuer" {
-  description = "The name of the Cert-Manager issuer to use for generating certificates."
-  type        = string
 }
 
 
@@ -282,8 +280,3 @@ variable "wordpress_admin_email" {
   default = "admin@example.com"
 }
 
-# Import from Terraform Registry Configuration
- variable "docker_image_pull_secrets" {
-  type        = string
-  description = "Secrets pour pull l'image Docker"
-}

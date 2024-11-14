@@ -23,4 +23,11 @@ resource "helm_release" "nginx-ingress-controller-chart" {
   }
 }
 
+data "kubernetes_service" "nginx-ingress-controller" {
+    metadata {
+        name = helm_release.nginx-ingress-controller-chart.name
+        namespace = helm_release.nginx-ingress-controller-chart.namespace
+    }
+}
+
 

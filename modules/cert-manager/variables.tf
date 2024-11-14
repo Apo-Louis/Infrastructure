@@ -16,7 +16,7 @@ variable "ovh_consumer_key" {
 variable "namespace" {
   description = "Namespace for the resources"
   default     = "cert-manager"
-  type = string
+  type        = string
 }
 
 variable "issuer_name" {
@@ -29,4 +29,16 @@ variable "email" {
   default     = "apoo.louis.8@gmail.com"
   type        = string
 }
+
+
+
+## OVH ISSUER ##
+
+variable "ovh_group_name" {
+  description = "Unique group name for the ovh ClusterIssuer"
+  type        = string
+  default     = "acme.apoland.net"
+}
+
+
 

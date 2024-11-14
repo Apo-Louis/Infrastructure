@@ -1,4 +1,14 @@
 
+variable "domain_name" {
+    description = "Domain used for the ingress setup"
+    type = string
+}
+
+variable "eks_endpoint" {
+    description = "Endpoint of the EKS cluster"
+    type = string
+}
+
 variable "docker_username" {
   description = "Docker username for private registry"
   type        = string
@@ -51,7 +61,7 @@ variable "environment_namespace" {
 variable "wordpress_repo" {
   type        = string
   description = "URL du dépôt WordPress"
-  default = "Apo-Louis/wordpress"
+  default = "https://github.com/Apo-Louis/wordpress"
 }
 
 variable "wordpress_repo_token" {
@@ -141,11 +151,6 @@ variable "docker_tag" {
   default = "prod-1.0.0"
 }
 
-# Import from Terraform Registry Configuration
- variable "docker_image_pull_secrets" {
-  type        = string
-  description = "Secrets pour pull l'image Docker"
-}
 
 # Variables Ingress
 variable "ingress_class" {
@@ -171,4 +176,11 @@ variable "wordpress_tls_secret_name" {
   type        = string
   description = "Nom du secret TLS pour WordPress"
   default = "wp-tls"
+}
+
+
+### External IP for Nginx Ingress
+variable "external_ip" {
+  type        = string
+  description = "External IP or Hostname from the Nginx Ingress"
 }

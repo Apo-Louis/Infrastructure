@@ -44,6 +44,11 @@ variable "worker_subnet_ids" {
   type        = list(string)
 }
 
+variable "worker_subnet_cidr" {
+    description = "A list of subnet CIDR block where the worker nodes wil be placed"
+    type = list(string)
+}
+
 variable "control_plane_subnet_ids" {
   description = "A list of subnet IDs for the control plane."
   type        = list(string)

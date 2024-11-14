@@ -6,30 +6,18 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "${chart_repo_url}"
-    targetRevision: "${chart_revision}"
-    chart: ${chart_name}
+    repoURL: ${repo_url}
+    targetRevision: ${chart_revision}
+    path: ${path}
     helm:
       valueFiles:
-        - ${values_file}
+        - values.yaml
+      values: |-
+        ${replace(indent(8, values_file), "%", "%%")}
   destination:
-    server: $(destination_server)
+    server: ${destination_server}
     namespace: ${app_namespace}
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-  # hooks:
-  #   - name: ${presync_job_name}
-  #     kind: Job
-  #     preSync: true
-  #     arguments:
-  #       parameters:
-  #         - name: COSIGN_IMAGE_REGISTRY
-  #           value: "${image_registry}"
-  #         - name: COSIGN_IMAGE_PROJECT
-  #           value: "${image_project}"
-  #         - name: COSIGN_IMAGE_NAME
-  #           value: "${image_name}"
-  #         - name: COSIGN_IMAGE_TAG
-  #           value: "${image_tag}"

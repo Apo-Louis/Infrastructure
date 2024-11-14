@@ -13,11 +13,11 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.18.0"
+      version = "~> 2.13.0"
     }
-    local = {
-      source  = "hashicorp/local-exec"
-      version = "2.3.0"
+    ovh = {
+        source = "ovh/ovh"
+        version = "1.0.0"
     }
   }
 }
