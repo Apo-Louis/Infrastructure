@@ -51,6 +51,7 @@ resource "kubectl_manifest" "wordpress_repo" {
 
         repo_password = var.wordpress_repo_token
     })
+    depends_on = [ helm_release.argocd ]
     }
 
 
@@ -109,7 +110,7 @@ resource "ovh_domain_zone_record" "argocd-dns" {
   subdomain = var.argo_hostname
   fieldtype = "CNAME"
   ttl       = 60
-  target    = var.external_ip
+  target    = "${var.external_ip}." # <-- Make sure to add the point (.) or ovh will add at the and of the endpoint the dns name
 }
 
 
@@ -118,7 +119,7 @@ resource "ovh_domain_zone_record" "wordpress-dns" {
   subdomain = var.wordpress_hostname
   fieldtype = "CNAME"
   ttl       = 60
-  target    = var.external_ip
+  target    = "${var.external_ip}."
 }
 
 
