@@ -74,7 +74,6 @@ module "cert-manager" {
   ovh_application_key    = var.ovh_application_key
   ovh_application_secret = var.ovh_application_secret
   ovh_consumer_key       = var.ovh_consumer_key
-  issuer_name            = "letsencrypt-${var.environment}"
   email                  = var.email
   depends_on             = [module.eks, module.vpc_and_subnets]
 }
@@ -91,7 +90,7 @@ module "argocd" {
   eks_endpoint = replace(module.eks.cluster_endpoint, "https://", "")
 
   argo_hostname         = var.argo_hostname
-  cluster_issuer        = module.cert-manager.issuer_name
+  cluster_issuer        = var.environment == "prod" ? module.cert-manager.prod_issuer_name : module.cert-manager.staging_issuer_name
   environment_namespace = var.environment
 
   wordpress_repo       = var.wordpress_repo

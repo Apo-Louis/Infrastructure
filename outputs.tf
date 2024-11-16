@@ -70,3 +70,14 @@
 #   description = "Nom du role IAM pour l'autoscaler"
 #   value       = module.autoscaler.autoscaler_iam_role_name
 # }
+
+
+
+output "cluster_endpoint" {
+  value = module.eks.cluster_endpoint
+}
+
+
+output "ingress_ip" {
+    value = module.nginx-ingress.external_ip
+}
