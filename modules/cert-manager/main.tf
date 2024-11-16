@@ -56,7 +56,8 @@ resource "helm_release" "cert-manager-webhook-ovh" {
     values = [ templatefile("${path.module}/templates/ovh-issuer.yaml", {
         ovh_group_name = var.ovh_group_name
         namespace = helm_release.cert-manager.namespace
-        issuer_name = var.issuer_name
+        prod_issuer_name = var.prod_issuer_name
+        staging_issuer_name = var.staging_issuer_name
         email = var.email
         ovh_credentials_name = kubernetes_secret.ovh_credentials.metadata[0].name
     })
@@ -67,30 +68,3 @@ resource "helm_release" "cert-manager-webhook-ovh" {
     kubernetes_secret.ovh_credentials
   ]
 }
-
-# resource "kubectl_manifest" "cluster_issuer" {
-#   yaml_body  = <<-YAML
-#   apiVersion: cert-manager.io/v1
-#   kind: ClusterIssuer
-#   metadata:
-#     name: ${var.issuer_name}
-#   spec:
-#     acme:
-#       server: https://acme-v02.api.letsencrypt.org/directory
-#       email: ${var.email}
-#       privateKeySecretRef:
-#         name: ${var.issuer_name}
-#       solvers:
-#         - dns01:
-#             webhook:
-#               groupName: ovh-dns
-#               solverName: ovh
-#               config:
-#                 endpoint: ovh-eu
-#                 applicationKey: ${var.ovh_application_key}
-#                 applicationSecretRef:
-#                   name: ${kubernetes_secret.ovh_credentials.metadata[0].name}
-#                   key: applicationSecret
-#   YAML
-#   depends_on = [helm_release.cert-manager]
-# }

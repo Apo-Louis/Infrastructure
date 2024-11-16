@@ -18,7 +18,69 @@ certManager:
 
 issuers:
   # Name of this issuer
-  - name: ${issuer_name}
+  - name: ${prod_issuer_name}
+    # When true this issuer is created.
+    # This is disabled by default
+    create: true
+    # Type of issuer. Can either be ClusterIssuer or Issuer.
+    # If issuer is specified, the the namespace is required.
+    # See for more information https://cert-manager.io/docs/concepts/issuer/
+    kind: ClusterIssuer
+    # If kind is issuer, then indicate the namespace in which this
+    # issuer should be deployed into.
+    namespace: ${namespace}
+    # Follow CNAME records or not. 2 options:
+    # - None (default): Don't follow CNAME records
+    # - Follow: Follow CNAME records
+    # See https://cert-manager.io/docs/configuration/acme/dns01/#delegated-domains-for-dns01 for more informations
+    cnameStrategy: None
+    # The acme server url. For Let's encrypt, you have 2 options:
+    # - for production (default): https://acme-v02.api.letsencrypt.org/directory
+    # - for staging: https://acme-staging-v02.api.letsencrypt.org/directory
+    # acmeServerUrl: https://acme-v02.api.letsencrypt.org/directory
+    acmeServerUrl: https://acme-v02.api.letsencrypt.org/directory
+    # email to use when registrering your account with Let's encrypt.
+    email: ${email}
+    # The endpoint name of the OVH API. It must be one of the following:
+    # ovh-eu, ovh-ca, kimsufi-eu, kimsufi-ca, soyoustart-eu, soyoustart-ca, runabove-ca
+    # See https://docs.certifytheweb.com/docs/dns/providers/ovh/ for more information
+    ovhEndpointName: ovh-eu
+    # define how the webhook should authenticate with the OVH API.
+    # Either set your credentials and the chart will create the necessary secret for you.
+    # Or provide the details of a secret already containing the OVH credentials.
+    # ovhAuthentication:
+    #   # the OVH application key. Leave emtpy if you are using an existing secret.
+    #   applicationKey: 'ktcpFTRoYzzVbtMX'
+    #   # the OVH application secret. Leave emtpy if you are using an existing secret.
+    #   applicationSecret: 'OSqURBU3BBd7jUASkKdQKTM9JbShTDcV'
+    #   # Your OVH consumer key. Leave emtpy if you are using an existing secret.
+    #   consumerKey: 'puRUtFpV8jQYAPYbP4p2WWR13hMowSak'
+
+    # If 'kind' is a ClusterIssuer, then the secret needs to be present
+    # in the same namespace as this deployment. If 'kind' is an Issuer,
+    # then the secret needs to be present in the same namespace as the Issuer.
+    ovhAuthenticationRef:
+      # The secret reference to an existing OVH application key.
+      applicationKeyRef:
+        # Name of the Kubernetes secret containing the OVH Application Key
+        name: ${ovh_credentials_name}
+        # The key name in the secret above that holds the actual OVH application key value
+        key: applicationKey
+      # The secret reference to an existing OVH application secret.
+      applicationSecretRef:
+        # Name of thhe Kubernetes secret containing the OVH Application Secret
+        name: ${ovh_credentials_name}
+        # The key name in the secret above that holds the actual OVH application secret value
+        key: applicationSecret
+      # The secret reference to an existing OVH consumer key
+      consumerKeyRef:
+        # Name of the Kubernetes secret containing the OVH consumer Key
+        name: ${ovh_credentials_name}
+        # The key name in the secret above that holds the actual OVH consumer key value
+        key: consumerKey
+
+  # Name of this issuer
+  - name: ${staging_issuer_name}
     # When true this issuer is created.
     # This is disabled by default
     create: true
@@ -78,6 +140,7 @@ issuers:
         name: ${ovh_credentials_name}
         # The key name in the secret above that holds the actual OVH consumer key value
         key: consumerKey
+
 rbac:
   # If the secret of the issuer is in a different namespace, change `Role` (default)
   # to `ClusterRole` so the webhook is able to access this secret.

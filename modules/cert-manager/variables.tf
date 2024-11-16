@@ -19,10 +19,18 @@ variable "namespace" {
   type        = string
 }
 
-variable "issuer_name" {
-  description = "Name of the issuer"
+variable "prod_issuer_name" {
+  description = "Prod issuer name"
   type        = string
+    default = "letsencrypt-prod"
 }
+
+variable "staging_issuer_name" {
+  description = "Staging issuer name"
+  type        = string
+  default = "letsencrypt-staging"
+}
+
 
 variable "email" {
   description = "Email for the Let's Encrypt account"

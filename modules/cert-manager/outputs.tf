@@ -1,4 +1,9 @@
-output "issuer_name" {
-  description = "Issuer name used to ingress annotation"
-  value       = var.issuer_name
+output "prod_issuer_name" {
+  description = "Prod issuer name"
+  value       = var.prod_issuer_name
+}
+
+output "staging_issuer_name" {
+  description = "Staging issuer name"
+  value       = var.staging_issuer_name
 }
