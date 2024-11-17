@@ -71,9 +71,4 @@ wordpress:
     storageClass: ${storage_class}
     volumeMode: Filesystem
     annotations: {}
-  job:
-    image: apoolouis8/wp-job:1.0.0
-    uid: 33
-    gid: 33
-    clonePath: "/"
 
