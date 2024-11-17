@@ -44,11 +44,6 @@ resource "helm_release" "cert-manager-webhook-ovh" {
   version    = "v0.7.0" # Vérifiez la dernière version disponible
 
   set {
-    name  = "groupName"
-    value = "ovh-dns" # Doit correspondre au groupName dans votre ClusterIssuer
-  }
-
-  set {
     name  = "configVersion"
     value = "0.0.1"
   }
