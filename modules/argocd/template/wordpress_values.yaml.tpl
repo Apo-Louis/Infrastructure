@@ -1,8 +1,7 @@
 github:
   wp_repo: ${wordpress_repo}
-  branch: ${wordpress_branch}
   token: ${wordpress_repo_token}
-
+  # commit: # <-- this variable is dynamic and is update via the jenkins pipeline
 mariadb:
   global:
     defaultStorageClass: ${storage_class}

@@ -32,6 +32,11 @@ module "eks" {
   workers_config           = local.workers_config
 }
 
+module "metrics-server" {
+    source = "./modules/metrics-server"
+    depends_on = [ module.eks ]
+}
+
 resource "kubectl_manifest" "environment_namespace" {
 
   yaml_body  = <<YAML
@@ -93,7 +98,8 @@ module "argocd" {
   cluster_issuer        = var.environment == "prod" ? module.cert-manager.prod_issuer_name : module.cert-manager.staging_issuer_name
   environment_namespace = var.environment
 
-  wordpress_repo       = var.wordpress_repo
+  wordpress_repo = var.wordpress_repo
+  wordpress_chart_repo       = var.wordpress_chart_repo
   wordpress_repo_token = var.wordpress_repo_token
   wordpress_branch     = var.wordpress_branch
 

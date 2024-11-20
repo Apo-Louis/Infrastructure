@@ -15,7 +15,7 @@ resource "kubernetes_secret" "docker_hub_auth" {
       }
     })
   }
-    depends_on = [ helm_release.argocd ]
+  depends_on = [helm_release.argocd]
 }
 
 # Add admin configuration password to not add
@@ -36,23 +36,23 @@ resource "helm_release" "argocd" {
       cluster_issuer = var.cluster_issuer
     }),
     # templatefile("${path.module}/template/repository_values.yaml", {
-    #   wordpress_repo       = "https://github.com${var.wordpress_repo}"
+    #   wordpress_chart_repo       = "https://github.com${var.wordpress_chart_repo}"
     #   wordpress_repo_token = var.wordpress_repo_token
     # })
   ]
 }
 
 
-resource "kubectl_manifest" "wordpress_repo" {
-    yaml_body = templatefile("${path.module}/template/repository_values.yaml", {
-        name = "wordpress-repo-secret"
-        namespace = var.argo_namespace
-        repo_url = "https://github.com/${var.wordpress_repo}"
+resource "kubectl_manifest" "wordpress_chart_repo" {
+  yaml_body = templatefile("${path.module}/template/repository_values.yaml", {
+    name      = "wordpress-repo-secret"
+    namespace = var.argo_namespace
+    repo_url  = "https://github.com/${var.wordpress_chart_repo}"
 
-        repo_password = var.wordpress_repo_token
-    })
-    depends_on = [ helm_release.argocd ]
-    }
+    repo_password = var.wordpress_repo_token
+  })
+  depends_on = [helm_release.argocd]
+}
 
 
 
@@ -61,14 +61,13 @@ resource "kubectl_manifest" "wordpress" {
   yaml_body = templatefile("${path.module}/template/application_manifest.yaml", {
     app_name           = "wordpress"
     argo_namespace     = var.argo_namespace
-    repo_url           = "https://github.com/${var.wordpress_repo}"
+    repo_url           = "https://github.com/${var.wordpress_chart_repo}"
     chart_revision     = "HEAD"
-    path               = "helm-chart/"
+    path               = "chart/"
     destination_server = var.destination_server
     app_namespace      = var.environment_namespace
     values_file = templatefile("${path.module}/template/wordpress_values.yaml.tpl", {
       wordpress_repo       = var.wordpress_repo
-      wordpress_branch     = var.wordpress_branch
       wordpress_repo_token = var.wordpress_repo_token
 
 

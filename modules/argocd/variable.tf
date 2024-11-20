@@ -58,11 +58,20 @@ variable "environment_namespace" {
 
 
 # Variables Github
+variable "wordpress_chart_repo" {
+  type        = string
+  description = "URL du dépôt WordPress"
+  default = "Apo-Louis/wordpress-charts"
+}
+
 variable "wordpress_repo" {
   type        = string
   description = "URL du dépôt WordPress"
-  default = "https://github.com/Apo-Louis/wordpress"
+  default = "Apo-Louis/wordpress"
 }
+
+
+
 
 variable "wordpress_repo_token" {
     type = string

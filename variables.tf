@@ -200,10 +200,15 @@ variable "environment_namespace" {
 
 
 
+variable "wordpress_chart_repo" {
+  type        = string
+  description = "Name of the wordpress chart repo"
+}
+
+
 variable "wordpress_repo" {
   type        = string
-  description = "URL du dépôt WordPress"
-  default = "Apo-Louis/wordpress"
+  description = "Name of the wordpress source code repo"
 }
 
 variable "wordpress_repo_token" {
