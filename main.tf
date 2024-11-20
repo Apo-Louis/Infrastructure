@@ -1,4 +1,8 @@
-# création VPC et des éléments associés (subnet, NAT, route table, IGW)
+#=============================================================================#
+#=============================================================================#
+#=========== Create AWS resources with VPC module
+#=============================================================================#
+#=============================================================================#
 module "vpc_and_subnets" {
   source               = "./modules/vpc_and_subnets"
   environment          = var.environment
@@ -18,7 +22,11 @@ module "vpc_and_subnets" {
   }
 }
 
-# création du cluster EKS
+#=============================================================================#
+#=============================================================================#
+#=========== Create kubernetes cluster with EKS module
+#=============================================================================#
+#=============================================================================#
 module "eks" {
   source                   = "./modules/eks"
   vpc_id                   = module.vpc_and_subnets.vpc_id
@@ -32,11 +40,19 @@ module "eks" {
   workers_config           = local.workers_config
 }
 
+#=============================================================================#
+#=============================================================================#
+#=========== Deploy Metrics Server with Helm
+#=============================================================================#
+#=============================================================================#
 module "metrics-server" {
     source = "./modules/metrics-server"
     depends_on = [ module.eks ]
 }
 
+#=============================================================================#
+#=========== Create namespace with kubectl manifest
+#=============================================================================#
 resource "kubectl_manifest" "environment_namespace" {
 
   yaml_body  = <<YAML
@@ -48,7 +64,11 @@ resource "kubectl_manifest" "environment_namespace" {
   depends_on = [module.eks]
 }
 
-# Configuration pour autoscaler
+#=============================================================================#
+#=============================================================================#
+#=========== Service account for the cluster-autoscaler
+#=============================================================================#
+#=============================================================================#
 module "autoscaler" {
   source                = "./modules/autoscaler"
   eks_cluster_name      = "${var.cluster_prefix}${var.eks_cluster_name}"
@@ -56,7 +76,11 @@ module "autoscaler" {
   tags                  = var.tags
 }
 
-# Configuration pour Velero
+#=============================================================================#
+#=============================================================================#
+#=========== Deploy Velero with HELM
+#=============================================================================#
+#=============================================================================#
 module "velero" {
   source                = "./modules/velero"
   region                = var.region
@@ -67,13 +91,22 @@ module "velero" {
   depends_on            = [module.eks]
 }
 
-
+#=============================================================================#
+#=============================================================================#
+#=========== Deploy Nginx Ingress Controller with HELM
+#=============================================================================#
+#=============================================================================#
 module "nginx-ingress" {
   source          = "./modules/nginx-ingress"
   kubeconfig_path = var.kubeconfig_path
   depends_on      = [module.eks]
 }
 
+#=============================================================================#
+#=============================================================================#
+#=========== Cert Manager Deployment with HELM
+#=============================================================================#
+#=============================================================================#
 module "cert-manager" {
   source                 = "./modules/cert-manager"
   ovh_application_key    = var.ovh_application_key
@@ -83,7 +116,12 @@ module "cert-manager" {
   depends_on             = [module.eks, module.vpc_and_subnets]
 }
 
-
+#=============================================================================#
+#=============================================================================#
+#=========== ArgoCD Deployment with HELM
+#=========== Wordpress application deployment with HELM
+#=============================================================================#
+#=============================================================================#
 module "argocd" {
   source = "./modules/argocd"
 
@@ -95,13 +133,13 @@ module "argocd" {
   eks_endpoint = replace(module.eks.cluster_endpoint, "https://", "")
 
   argo_hostname         = var.argo_hostname
+  argo_admin_password   = var.argo_admin_password
   cluster_issuer        = var.environment == "prod" ? module.cert-manager.prod_issuer_name : module.cert-manager.staging_issuer_name
   environment_namespace = var.environment
 
   wordpress_repo = var.wordpress_repo
   wordpress_chart_repo       = var.wordpress_chart_repo
   wordpress_repo_token = var.wordpress_repo_token
-  wordpress_branch     = var.wordpress_branch
 
   storage_class         = module.eks.efs_storage_class
   mariadb_root_password = var.mariadb_root_password
@@ -124,7 +162,11 @@ module "argocd" {
 }
 
 
-
+#=============================================================================#
+#=============================================================================#
+#=========== GateKeeper Deployment with HELM
+#=============================================================================#
+#=============================================================================#
 module "gatekeeper" {
   source        = "./modules/gatekeeper"
   app_namespace = var.environment_namespace
@@ -132,6 +174,12 @@ module "gatekeeper" {
   depends_on = [module.eks, kubectl_manifest.environment_namespace]
 }
 
+
+#=============================================================================#
+#=============================================================================#
+#=========== KubeArmor Deployment with HELM
+#=============================================================================#
+#=============================================================================#
 module "kubearmor" {
   source = "./modules/kubearmor"
 

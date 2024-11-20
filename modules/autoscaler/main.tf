@@ -1,4 +1,8 @@
-# creation du service account pour le cluster-autoscaler
+#=============================================================================#
+#=============================================================================#
+#=========== Service account for the cluster-autoscaler
+#=============================================================================#
+#=============================================================================#
 module "autoscaler_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.39.0"

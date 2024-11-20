@@ -31,22 +31,16 @@ variable "staging_issuer_name" {
   default = "letsencrypt-staging"
 }
 
-
 variable "email" {
   description = "Email for the Let's Encrypt account"
   default     = "apoo.louis.8@gmail.com"
   type        = string
 }
 
-
-
 ## OVH ISSUER ##
-
 variable "ovh_group_name" {
   description = "Unique group name for the ovh ClusterIssuer"
   type        = string
   default     = "acme.apoland.net"
 }
-
-
 

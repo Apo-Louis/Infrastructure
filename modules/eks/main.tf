@@ -1,3 +1,8 @@
+#=============================================================================#
+#=============================================================================#
+#=========== Create kubernetes cluster with EKS module
+#=============================================================================#
+#=============================================================================#
 module "eks_cluster" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
@@ -43,7 +48,9 @@ module "eks_cluster" {
   tags = var.tags
 }
 
-# IAM Role for EFS CSI Driver
+#=============================================================================#
+#=========== IAM Role for EFS CSI Driver
+#=============================================================================#
 resource "aws_iam_role" "efs_csi" {
   name = "${var.cluster_name}-efs-csi-controller"
 
@@ -67,28 +74,17 @@ resource "aws_iam_role" "efs_csi" {
   })
 }
 
-# Attach AWS managed policy for EFS CSI Driver
+#=============================================================================#
+#=========== Attach AWS managed policy for EFS CSI Driver
+#=============================================================================#
 resource "aws_iam_role_policy_attachment" "efs_csi_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
   role       = aws_iam_role.efs_csi.name
 }
 
-# # Service account for EFS CSI Driver
-# resource "kubernetes_service_account" "efs_csi_controller" {
-#   metadata {
-#     name      = "efs-csi-controller-sa"
-#     namespace = "kube-system"
-#     annotations = {
-#       "eks.amazonaws.com/role-arn" = aws_iam_role.efs_csi.arn
-#     }
-#     labels = {
-#       "app.kubernetes.io/name" = "aws-efs-csi-driver"
-#     }
-#   }
-#   depends_on = [module.eks_cluster]
-# }
-
-# Create EFS File System
+#=============================================================================#
+#=========== Create EFS File System
+#=============================================================================#
 resource "aws_efs_file_system" "eks" {
   creation_token = "${var.cluster_name}-efs"
   encrypted      = true
@@ -97,7 +93,9 @@ resource "aws_efs_file_system" "eks" {
   }
 }
 
-# Create mount targets in each subnet
+#=============================================================================#
+#=========== Create mount targets in each subnet
+#=============================================================================#
 resource "aws_efs_mount_target" "eks" {
   count           = length(var.worker_subnet_ids)
   file_system_id  = aws_efs_file_system.eks.id
@@ -105,7 +103,9 @@ resource "aws_efs_mount_target" "eks" {
   security_groups = [aws_security_group.efs.id]
 }
 
-# Security group for EFS
+#=============================================================================#
+#=========== Security group for EFS
+#=============================================================================#
 resource "aws_security_group" "efs" {
   name        = "${var.cluster_name}-efs"
   description = "Security group for EFS mount targets"
@@ -134,7 +134,9 @@ resource "aws_security_group" "efs" {
   )
 }
 
-# Create StorageClass using Kubernetes provider
+#=============================================================================#
+#=========== Create StorageClass using kubernetes provider
+#=============================================================================#
 resource "kubernetes_storage_class" "efs" {
   metadata {
     name = "efs-sc"
@@ -153,7 +155,10 @@ resource "kubernetes_storage_class" "efs" {
     module.eks_cluster
   ]
 }
-
+#=============================================================================#
+#=========== IAM Role for EFS CSI Driver
+#=============================================================================#
+r
 # Update kubeconfig
 resource "null_resource" "kubeconfig" {
   provisioner "local-exec" {

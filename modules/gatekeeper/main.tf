@@ -1,6 +1,11 @@
+
+#=============================================================================#
+#=============================================================================#
+#=========== GateKeeper deployment with helm
+#=============================================================================#
+#=============================================================================#
 ### Official library :
 ## https://open-policy-agent.github.io/gatekeeper-library/website/
-
 resource "helm_release" "gatekeeper" {
   repository = "https://open-policy-agent.github.io/gatekeeper/charts"
   chart      = "gatekeeper"
@@ -38,12 +43,14 @@ resource "kubectl_manifest" "nodeport_policy" {
   })
 }
 
-
 # Autorized repos to application namespace
 resource "kubectl_manifest" "allowed_repos" {
   yaml_body = templatefile("${path.module}/policies/allows-repos.yaml", {
-    namespace  = var.app_namespace
-    repos_list = join("\n      ", [for repo in var.allowed_repo_list : "- ${repo}"]) # Ajout de 6 espaces pour l'indentation correcte
+    namespace = var.app_namespace
+    repos_list = join(
+      "\n      ",
+      [for repo in var.allowed_repo_list : "- ${repo}"]
+    ) # Added 6 indent
 
     depends_on = [helm_release.gatekeeper]
   })

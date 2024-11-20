@@ -1,12 +1,12 @@
 
 variable "domain_name" {
-    description = "Domain used for the ingress setup"
-    type = string
+  description = "Domain used for the ingress setup"
+  type        = string
 }
 
 variable "eks_endpoint" {
-    description = "Endpoint of the EKS cluster"
-    type = string
+  description = "Endpoint of the EKS cluster"
+  type        = string
 }
 
 variable "docker_username" {
@@ -27,9 +27,6 @@ variable "docker_email" {
   sensitive   = true
 }
 
-
-
-
 variable "argo_hostname" {
   description = "The hostname that will be used by the Ingress resource for routing traffic."
   type        = string
@@ -41,7 +38,10 @@ variable "argo_namespace" {
   default     = "argocd"
 }
 
-
+variable "argo_admin_password" {
+  description = "ArgoCD admin password"
+  type        = string
+}
 
 variable "destination_server" {
   description = "The destination server to which Argo CD will connect."
@@ -54,139 +54,114 @@ variable "environment_namespace" {
   type        = string
 }
 
-
-
-
 # Variables Github
 variable "wordpress_chart_repo" {
   type        = string
-  description = "URL du dépôt WordPress"
-  default = "Apo-Louis/wordpress-charts"
+  description = "Wordpress Chart name"
+  default     = "Apo-Louis/wordpress-charts"
 }
 
 variable "wordpress_repo" {
   type        = string
-  description = "URL du dépôt WordPress"
-  default = "Apo-Louis/wordpress"
+  description = "Wordpress source code repo"
+  default     = "Apo-Louis/wordpress"
 }
-
-
-
 
 variable "wordpress_repo_token" {
-    type = string
-    description = "Token generate from GitHub"
-    sensitive = true
-}
-variable "wordpress_branch" {
   type        = string
-  description = "Branche du dépôt WordPress à utiliser"
-  default = "main"
+  description = "Token generate from GitHub"
+  sensitive   = true
 }
 
 # Variables MariaDB
 variable "storage_class" {
   type        = string
-  description = "Classe de stockage à utiliser"
-  default = "default"
+  description = "Storage Class Name for persistent volumes"
+  default     = "default"
 }
 
 variable "mariadb_root_password" {
   type        = string
-  description = "Mot de passe root MariaDB"
+  description = "Mariadb root password"
   sensitive   = true
 }
 
 variable "database_name" {
   type        = string
-  description = "Nom de la base de données WordPress"
-  default = "wordpressdb"
+  description = "Wordpress database name"
+  default     = "wordpressdb"
 }
 
 variable "database_username" {
   type        = string
-  description = "Nom d'utilisateur de la base de données"
-  default = "wordpress"
+  description = "Wordpres database username"
+  default     = "wordpress"
 }
 
 variable "database_password" {
   type        = string
-  description = "Mot de passe de la base de données"
+  description = "Wordpress database password"
   sensitive   = true
-  default = "password"
+  default     = "password"
 }
 
 variable "mariadb_volume_size" {
   type        = string
-  description = "Taille du volume MariaDB"
-  default = "10Gi"
+  description = "Mariadb PVC volume size"
+  default     = "10Gi"
 }
 
 # Variables WordPress
 variable "wordpress_site_title" {
   type        = string
-  description = "Titre du site WordPress"
-  default = "Fil Rouge Project Wordpress"
-  }
+  description = "Wordpress Site Title"
+  default     = "Fil Rouge Project Wordpress"
+}
 
 variable "wordpress_admin_user" {
   type        = string
-  description = "Nom d'utilisateur administrateur WordPress"
-  default = "admin"
+  description = "Wordpress admin username"
+  default     = "admin"
 }
 
 variable "wordpress_admin_password" {
   type        = string
-  description = "Mot de passe administrateur WordPress"
+  description = "Wordpress admin password"
   sensitive   = true
-  default = "password"
+  default     = "password"
 }
 
 variable "wordpress_admin_email" {
   type        = string
-  description = "Email de l'administrateur WordPress"
-  default = "admin@example.com"
+  description = "Wordpress admin email"
+  default     = "admin@example.com"
 }
-
-variable "docker_image" {
-  type        = string
-  description = "Repository de l'image Docker WordPress"
-  default = "apoolouis8/wordpress"
-}
-
-variable "docker_tag" {
-  type        = string
-  description = "Tag de l'image Docker WordPress"
-  default = "prod-1.0.0"
-}
-
 
 # Variables Ingress
 variable "ingress_class" {
   type        = string
-  description = "Classe d'ingress à utiliser"
-  default = "nginx"
+  description = "IngressClass name"
+  default     = "nginx"
 }
 
 variable "cluster_issuer" {
   type        = string
-  description = "Nom du cluster-issuer cert-manager"
-  default = "letsencrypt"
+  description = "Cluster issuer name"
+  default     = "letsencrypt"
 }
 
 variable "wordpress_hostname" {
   type        = string
-  description = "Nom d'hôte pour WordPress"
-  default = "filrouge-wp.apoland.net"
+  description = "Wordpress hostname"
+  default     = "filrouge-wp"
 }
 
 
 variable "wordpress_tls_secret_name" {
   type        = string
-  description = "Nom du secret TLS pour WordPress"
-  default = "wp-tls"
+  description = "TLS secret name"
+  default     = "wp-tls"
 }
-
 
 ### External IP for Nginx Ingress
 variable "external_ip" {

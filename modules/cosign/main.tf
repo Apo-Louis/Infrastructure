@@ -1,1 +1,0 @@
-# Local exec avec sealed-secret pour stocké le code en encrypter des clé priv/pub pour le controle du hash sur harbor

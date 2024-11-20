@@ -1,4 +1,8 @@
-# Politique IAM pour le rôle Velero
+#=============================================================================#
+#=============================================================================#
+#=========== IAM Policy for Velero role
+#=============================================================================#
+#=============================================================================#
 resource "aws_iam_role_policy" "velero_policy" {
   name = "velero-main-policy"
   role = module.velero_irsa_role.iam_role_name
@@ -37,6 +41,11 @@ resource "aws_iam_role_policy" "velero_policy" {
   })
 }
 
+#=============================================================================#
+#=============================================================================#
+#=========== Create s3 bucket for velero with module
+#=============================================================================#
+#=============================================================================#
 # Module S3 bucket avec configuration mise à jour
 module "s3_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
@@ -67,7 +76,9 @@ module "s3_bucket" {
   }
 }
 
-# Politique de bucket S3 explicite
+#=============================================================================#
+#=========== s3 bucket policy
+#=============================================================================#
 resource "aws_s3_bucket_policy" "velero" {
   bucket = module.s3_bucket.s3_bucket_id
 
@@ -97,7 +108,9 @@ resource "aws_s3_bucket_policy" "velero" {
   })
 }
 
-# Configuration du module IRSA pour Velero
+#=============================================================================#
+#=========== IRSA module for velero
+#=============================================================================#
 module "velero_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.39.0"
@@ -117,7 +130,11 @@ module "velero_irsa_role" {
   tags = var.tags
 }
 
-
+#=============================================================================#
+#=============================================================================#
+#=========== IAM Policy for Velero role
+#=============================================================================#
+#=============================================================================#
 resource "local_file" "velero_values_yaml" {
   filename = "${path.module}/generated_values.yaml"
   content = templatefile("${path.module}/values.yaml.tpl", {
@@ -131,6 +148,11 @@ resource "local_file" "velero_values_yaml" {
   })
 }
 
+#=============================================================================#
+#=============================================================================#
+#=========== Deploy Velero with HELM
+#=============================================================================#
+#=============================================================================#
 resource "helm_release" "velero" {
   name       = "velero"
   repository = "https://vmware-tanzu.github.io/helm-charts"

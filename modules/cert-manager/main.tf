@@ -1,6 +1,8 @@
-
-
-# Création de la release Helm de cert-manager
+#=============================================================================#
+#=============================================================================#
+#=========== Cert Manager Deployment with HELM
+#=============================================================================#
+#=============================================================================#
 resource "helm_release" "cert-manager" {
   name             = "cert-manager"
   repository       = "https://charts.jetstack.io"
@@ -15,8 +17,11 @@ resource "helm_release" "cert-manager" {
   }
 }
 
-
-# Création du secret OVH avant l'issuer
+#=============================================================================#
+#=============================================================================#
+#=========== Create ovh_credentials secret needed for the clusterIssuer
+#=============================================================================#
+#=============================================================================#
 resource "kubernetes_secret" "ovh_credentials" {
   metadata {
     name      = "ovh-credentials"
@@ -34,14 +39,18 @@ resource "kubernetes_secret" "ovh_credentials" {
 }
 
 
-
-# Fusionné le Cluster Issuer avec le helm ovh
+#=============================================================================#
+#=============================================================================#
+#=========== OVH Webhook needed to record DNS
+#=========== for applications deployed in the cluster
+#=============================================================================#
+#=============================================================================#
 resource "helm_release" "cert-manager-webhook-ovh" {
   name       = "cert-manager-webhook-ovh"
   repository = "https://aureq.github.io/cert-manager-webhook-ovh"
   chart      = "cert-manager-webhook-ovh"
   namespace  = "cert-manager"
-  version    = "v0.7.0" # Vérifiez la dernière version disponible
+  version    = "v0.7.0"
 
   set {
     name  = "configVersion"

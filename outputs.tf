@@ -81,3 +81,12 @@ output "cluster_endpoint" {
 output "ingress_ip" {
     value = module.nginx-ingress.external_ip
 }
+
+output "argocd_url" {
+    value = module.argocd.argocd_url
+}
+
+output "wordpress_url" {
+    value = module.argocd.wordpress_url
+}
+

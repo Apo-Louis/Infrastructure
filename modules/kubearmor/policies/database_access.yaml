@@ -16,9 +16,6 @@
 # Attack Type SQL Injection, Credential Access, Account Takeover
 # Actual Attack Yahoo Voices Data Breach in 2012
 
-
-
-
 apiVersion: security.kubearmor.com/v1
 kind: KubeArmorPolicy
 metadata:

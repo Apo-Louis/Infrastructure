@@ -1,3 +1,8 @@
+#=============================================================================#
+#=============================================================================#
+#=========== Docker hub Credential Secret
+#=============================================================================#
+#=============================================================================#
 resource "kubernetes_secret" "docker_hub_auth" {
   metadata {
     name      = "docker-hub-auth"
@@ -18,7 +23,12 @@ resource "kubernetes_secret" "docker_hub_auth" {
   depends_on = [helm_release.argocd]
 }
 
-# Add admin configuration password to not add
+#=============================================================================#
+#=============================================================================#
+#============ ArgoCD Helm Deployment
+#=============================================================================#
+#=============================================================================#
+#------- https://artifacthub.io/packages/helm/argo/argo-cd
 resource "helm_release" "argocd" {
   name = "argocd"
 
@@ -35,14 +45,19 @@ resource "helm_release" "argocd" {
       ingress_class  = var.ingress_class
       cluster_issuer = var.cluster_issuer
     }),
-    # templatefile("${path.module}/template/repository_values.yaml", {
-    #   wordpress_chart_repo       = "https://github.com${var.wordpress_chart_repo}"
-    #   wordpress_repo_token = var.wordpress_repo_token
-    # })
   ]
+  set_sensitive {
+    name  = "configs.secret.argocdServerAdminPassword"
+    value = bcrypt(var.argo_admin_password) # Le mot de passe doit être hashé en bcrypt
+    }
 }
 
-
+#=============================================================================#
+#=============================================================================#
+#============= Create ArgoCD repository for Wordpress
+#============= via a kubernetes manifest
+#=============================================================================#
+#=============================================================================#
 resource "kubectl_manifest" "wordpress_chart_repo" {
   yaml_body = templatefile("${path.module}/template/repository_values.yaml", {
     name      = "wordpress-repo-secret"
@@ -55,8 +70,10 @@ resource "kubectl_manifest" "wordpress_chart_repo" {
 }
 
 
-
-
+#=============================================================================#
+#============== Deployer ArgoCD application for wordpress with
+#============== application_manifest template
+#=============================================================================#
 resource "kubectl_manifest" "wordpress" {
   yaml_body = templatefile("${path.module}/template/application_manifest.yaml", {
     app_name           = "wordpress"
@@ -85,9 +102,6 @@ resource "kubectl_manifest" "wordpress" {
 
       mariadb_volume_size = var.mariadb_volume_size
 
-      # docker_image = var.docker_image
-      # docker_tag   = var.docker_tag
-
       docker_image_pull_secrets = kubernetes_secret.docker_hub_auth.metadata[0].name
 
       ingress_class = var.ingress_class
@@ -96,14 +110,14 @@ resource "kubectl_manifest" "wordpress" {
       cluster_issuer     = var.cluster_issuer
 
       wordpress_tls_secret_name = var.wordpress_tls_secret_name
-
-
     })
-
   })
   depends_on = [helm_release.argocd, kubernetes_secret.docker_hub_auth]
 }
 
+#=============================================================================#
+#============== ArgoCD DNS Record
+#=============================================================================#
 resource "ovh_domain_zone_record" "argocd-dns" {
   zone      = var.domain_name
   subdomain = var.argo_hostname
@@ -113,6 +127,9 @@ resource "ovh_domain_zone_record" "argocd-dns" {
 }
 
 
+#=============================================================================#
+#============== ArgoCD DNS Record
+#=============================================================================#
 resource "ovh_domain_zone_record" "wordpress-dns" {
   zone      = var.domain_name
   subdomain = var.wordpress_hostname
@@ -120,6 +137,4 @@ resource "ovh_domain_zone_record" "wordpress-dns" {
   ttl       = 60
   target    = "${var.external_ip}."
 }
-
-
 

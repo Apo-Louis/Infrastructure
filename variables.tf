@@ -178,6 +178,11 @@ variable "argo_hostname" {
   type        = string
 }
 
+variable "argo_admin_password" {
+  description = "ArgoCD admin password"
+  type        = string
+}
+
 variable "argo_namespace" {
   description = "The namespace in which to deploy the ingress controller."
   type        = string
