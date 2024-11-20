@@ -47,10 +47,10 @@ spec:
   process:
     matchPaths:
     - path: /usr/bin/shred
-    - path: /usr/bin/rm
-    - path: /bin/mv
-    - path: /bin/rm
-    - path: /usr/bin/mv
+    matchDirectories:
+    - dir: /var/log/
+      recursive: true
+
   selector:
     matchLabels: {}
   severity: 5
