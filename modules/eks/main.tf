@@ -158,7 +158,6 @@ resource "kubernetes_storage_class" "efs" {
 #=============================================================================#
 #=========== IAM Role for EFS CSI Driver
 #=============================================================================#
-r
 # Update kubeconfig
 resource "null_resource" "kubeconfig" {
   provisioner "local-exec" {
