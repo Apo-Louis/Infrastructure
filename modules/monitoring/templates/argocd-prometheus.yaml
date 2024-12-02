@@ -1,0 +1,52 @@
+# https://argo-cd.readthedocs.io/en/latest/operator-manual/metrics
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: argocd-metrics
+  namespace: ${namespace}
+  labels:
+    release: ${kube_release}
+spec:
+  selector:
+    matchLabels:
+     app.kubernetes.io/name: argocd-metrics
+  namespaceSelector:
+    any: true
+  endpoints:
+  - port: metrics
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: argocd-repo-server-metrics
+  namespace: ${namespace}
+  labels:
+    release: ${kube_release}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-repo-server
+  namespaceSelector:
+    any: true
+  endpoints:
+  - port: metrics
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: argocd-server-metrics
+  namespace: ${namespace}
+  labels:
+    release: ${kube_release}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-server-metrics
+  namespaceSelector:
+    any: true
+  endpoints:
+  - port: metrics
+

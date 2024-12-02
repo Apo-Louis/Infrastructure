@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx-ingress-metrics
+  namespace: ${namespace}
+  labels:
+    release: ${kube_release}
+spec:
+  endpoints:
+  - interval: 30s
+    port: metrics
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+    - ${nginx_ingress_namespace}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: ${nginx_ingress_namespace}
+      app.kubernetes.io/name: ${nginx_ingress_name}

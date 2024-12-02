@@ -46,8 +46,8 @@ module "eks" {
 #=============================================================================#
 #=============================================================================#
 module "metrics-server" {
-    source = "./modules/metrics-server"
-    depends_on = [ module.eks ]
+  source     = "./modules/metrics-server"
+  depends_on = [module.eks]
 }
 
 #=============================================================================#
@@ -81,14 +81,22 @@ module "autoscaler" {
 #=========== Deploy Velero with HELM
 #=============================================================================#
 #=============================================================================#
+# module "velero" {
+#   source                = "./modules/velero"
+#   region                = var.region
+#   bucket_name_velero    = "${var.cluster_prefix}${var.bucket_name_velero}"
+#   eks_cluster_name      = "${var.cluster_prefix}${var.eks_cluster_name}"
+#   eks_oidc_provider_arn = module.eks.oidc_provider_arn
+#   tags                  = var.tags
+#   depends_on            = [module.eks]
+# }
+
 module "velero" {
-  source                = "./modules/velero"
-  region                = var.region
-  bucket_name_velero    = "${var.cluster_prefix}${var.bucket_name_velero}"
-  eks_cluster_name      = "${var.cluster_prefix}${var.eks_cluster_name}"
-  eks_oidc_provider_arn = module.eks.oidc_provider_arn
-  tags                  = var.tags
-  depends_on            = [module.eks]
+  source                  = "./modules/velero"
+  cluster_name            = var.eks_cluster_name
+  region                  = var.region
+  cluster_oidc_issuer_url = module.eks.oidc_provider_url
+    depends_on = [ module.eks ]
 }
 
 #=============================================================================#
@@ -137,8 +145,8 @@ module "argocd" {
   cluster_issuer        = var.environment == "prod" ? module.cert-manager.prod_issuer_name : module.cert-manager.staging_issuer_name
   environment_namespace = var.environment
 
-  wordpress_repo = var.wordpress_repo
-  wordpress_chart_repo       = var.wordpress_chart_repo
+  wordpress_repo       = var.wordpress_repo
+  wordpress_chart_repo = var.wordpress_chart_repo
   wordpress_repo_token = var.wordpress_repo_token
 
   storage_class         = module.eks.efs_storage_class
@@ -186,4 +194,17 @@ module "kubearmor" {
   app_namespace = var.environment_namespace
 
   depends_on = [module.eks, kubectl_manifest.environment_namespace]
+}
+
+
+module "monitoring" {
+    source = "./modules/monitoring"
+
+    nginx_ingress_name = module.nginx-ingress.ingress_name
+    nginx_ingress_namespace = module.nginx-ingress.ingress_namespace
+
+    mariadb_username = var.database_username
+    mariadb_password = var.database_password
+
+    storage_class = module.eks.efs_storage_class
 }

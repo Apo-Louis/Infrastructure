@@ -1,0 +1,71 @@
+# -- https://github.com/prometheus/mysqld_exporter
+# mysql-exporter.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-exporter
+  namespace: ${namespace}
+type: Opaque
+data:
+  # base64 variable with this structure: "exporter:password@(hostname:3306)/"
+  DATA_SOURCE_NAME: ${data_source_name}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-exporter
+  namespace: ${namespace}
+spec:
+  selector:
+    matchLabels:
+      app: mysql-exporter
+  template:
+    metadata:
+      labels:
+        app: mysql-exporter
+    spec:
+      containers:
+      - name: mysql-exporter
+        image: prom/mysqld-exporter:v0.14.0
+        ports:
+        - containerPort: 9104
+          name: metrics
+        env:
+        - name: DATA_SOURCE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-exporter
+              key: DATA_SOURCE_NAME
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-exporter
+  namespace: ${namespace}
+  labels:
+    app: mysql-exporter
+spec:
+  ports:
+  - port: 9104
+    targetPort: metrics
+    name: metrics
+  selector:
+    app: mysql-exporter
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysql-exporter
+  namespace: ${namespace}
+  labels:
+    release: ${kube_release}
+spec:
+  selector:
+    matchLabels:
+      app: mysql-exporter
+  endpoints:
+  - port: metrics

@@ -7,5 +7,6 @@ test/
 *.log
 *.txt
 Lewis/*
+trash/
 outputs/*
 !outputs/.gitkeep
