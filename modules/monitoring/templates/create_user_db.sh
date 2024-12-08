@@ -1,4 +1,0 @@
-CREATE USER 'exporter'@'%' IDENTIFIED BY 'password';
-GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';
-GRANT SUPER, SLAVE MONITOR ON *.* TO 'exporter'@'%';
-FLUSH PRIVILEGES;
