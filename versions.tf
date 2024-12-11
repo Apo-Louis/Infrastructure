@@ -1,13 +1,13 @@
 # configuration de terraform
 terraform {
-  # backend "s3" {
-  #   bucket = "ff14-raidplanner-terraform-state"
-  #   key    = "global/terraform-state/cluster/terraform.tfstate"
-  #   region = "eu-west-3"
 
-  #   dynamodb_table = "ff14-raidplanner-terraform-locks"
-  #   encrypt        = true
-  # }
+  backend "s3" {
+    bucket         = "ernest-alimovic-terraform-state"
+    key            = "terraform.tfstate"
+    region         = "eu-west-3"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
 
 
   required_providers {
@@ -30,7 +30,7 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
-    
+
     kubectl = {
       source = "gavinbunney/kubectl"  # Correct source
       version = "1.14.0"
