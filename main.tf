@@ -81,16 +81,6 @@ module "autoscaler" {
 #=========== Deploy Velero with HELM
 #=============================================================================#
 #=============================================================================#
-# module "velero" {
-#   source                = "./modules/velero"
-#   region                = var.region
-#   bucket_name_velero    = "${var.cluster_prefix}${var.bucket_name_velero}"
-#   eks_cluster_name      = "${var.cluster_prefix}${var.eks_cluster_name}"
-#   eks_oidc_provider_arn = module.eks.oidc_provider_arn
-#   tags                  = var.tags
-#   depends_on            = [module.eks]
-# }
-
 module "velero" {
   source                  = "./modules/velero"
   cluster_name            = var.eks_cluster_name
