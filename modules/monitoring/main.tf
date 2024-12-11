@@ -71,25 +71,22 @@ resource "kubernetes_secret" "alertmanager_credentials" {
     name      = "alertmanager-credentials"
     namespace = var.namespace
   }
-
   data = {
-    "smtp_auth_username" = var.smtp_username
-    "smtp_auth_password" = var.smtp_password
+    "password" = base64encode(var.smtp_password)
   }
+  depends_on = [helm_release.prometheus]
 }
 
 resource "kubectl_manifest" "alertmanager_config" {
   yaml_body = templatefile("${path.module}/templates/alertmanager-config.yaml",
     {
-      namespace                = var.namespace
-      smtp_host               = var.smtp_host
-      smtp_from               = var.smtp_from
-      smtp_to                 = var.smtp_to
-      credentials_secret_name = kubernetes_secret.alertmanager_credentials.metadata[0].name
+      namespace               = var.namespace
+      smtp_host              = var.smtp_host
+      smtp_from              = var.smtp_from
+      smtp_to                = var.smtp_to
+      smtp_username          = var.smtp_username
+      secret_name            = kubernetes_secret.alertmanager_credentials.metadata[0].name
     }
   )
-
   depends_on = [helm_release.prometheus, kubernetes_secret.alertmanager_credentials]
 }
-
-

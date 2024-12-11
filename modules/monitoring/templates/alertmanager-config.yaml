@@ -1,4 +1,3 @@
-# templates/alertmanager-config.yaml
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: AlertmanagerConfig
 metadata:
@@ -17,24 +16,27 @@ spec:
             value: critical
         group_wait: 30s
         repeat_interval: 1h
-
   receivers:
     - name: 'default-receiver'
       emailConfigs:
-        - to: '${smtp_to}'
-          from: '${smtp_from}'
-          smarthost: '${smtp_host}'
-          authUsername: '${credentials_secret_name}:smtp_auth_username'
-          authPassword: '${credentials_secret_name}:smtp_auth_password'
+        - to: ${smtp_to}
+          from: ${smtp_from}
+          smarthost: ${smtp_host}
+          authUsername: ${smtp_username}
+          authPassword:
+            name: ${secret_name}
+            key: password
           requireTLS: true
-
     - name: 'critical-alerts'
       emailConfigs:
-        - to: '${smtp_to}'
-          from: '${smtp_from}'
-          smarthost: '${smtp_host}'
-          authUsername: '${credentials_secret_name}:smtp_auth_username'
-          authPassword: '${credentials_secret_name}:smtp_auth_password'
+        - to: ${smtp_to}
+          from: ${smtp_from}
+          smarthost: ${smtp_host}
+          authUsername: ${smtp_username}
+          authPassword:
+            name: ${secret_name}
+            key: password
           requireTLS: true
           headers:
-            subject: '[CRITICAL] Monitoring Alert'
+            - key: Subject
+              value: '[CRITICAL] Monitoring Alert'

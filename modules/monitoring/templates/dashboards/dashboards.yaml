@@ -45,3 +45,7 @@ grafana:
         gnetId: 14584
         revision: 1
         datasource: Prometheus
+      mariadb:
+        gnetId: 14621
+        revision: 1
+        datasource: Prometheus
